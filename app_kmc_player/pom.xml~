@@ -1,0 +1,135 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>edu.urjc.pfc.rtsp.pruebas</groupId>
+	<artifactId>PlayerRTSP</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>apk</packaging>
+
+	<name>PlayerRTSP</name>
+	<description>Android APP that implements a multicast RTSP client using the API api_rtsp_multicast and Kurento.</description>
+
+	<developers>
+		<developer>
+			<id>laggc</id>
+			<name>L. Álvaro González</name>
+		</developer>
+	</developers>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8 </project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<sign.develop>true</sign.develop>
+		<android.platform>14</android.platform>
+
+		<!-- Dependencies Versions -->
+		<android.version>4.0.1.2</android.version>
+		<api_rtsp_multicast_client.version>0.0.1-SNAPSHOT</api_rtsp_multicast_client.version>
+		<slf4j-android.version>1.6.1-RC1</slf4j-android.version>
+
+		<!-- Plugins Versions -->
+		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+		<maven-compiler-plugin.source_target>1.6</maven-compiler-plugin.source_target>
+		<maven-resources-plugin.version>2.6</maven-resources-plugin.version>
+		<android-maven-plugin.version>3.5.3</android-maven-plugin.version>
+
+	</properties>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>android</artifactId>
+			<version>${android.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>edu.urjc.pfc.rtsp</groupId>
+			<artifactId>api_rtsp_multicast_client</artifactId>
+			<version>${api_rtsp_multicast_client.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-android</artifactId>
+			<version>${slf4j-android.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>${basedir}/res</directory>
+				<filtering>true</filtering>
+				<targetPath>${project.build.directory}/filtered-res</targetPath>
+				<includes>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>${basedir}/res</directory>
+				<filtering>false</filtering>
+				<targetPath>${project.build.directory}/filtered-res</targetPath>
+				<excludes>
+					<exclude>**/*.xml</exclude>
+				</excludes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven-resources-plugin.version}</version>
+
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>resources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${maven-compiler-plugin.source_target}</source>
+					<target>${maven-compiler-plugin.source_target}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+				<artifactId>android-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<version>${android-maven-plugin.version}</version>
+				<configuration>
+					<resourceDirectory>${project.build.directory}/filtered-res</resourceDirectory>
+					<manifest>
+						<debuggable>true</debuggable>
+					</manifest>
+					<sdk>
+						<platform>${android.platform}</platform>
+					</sdk>
+					<deleteConflictingFiles>true</deleteConflictingFiles>
+					<sign>
+						<debug>${sign.develop}</debug>
+					</sign>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+		<extensions>
+
+		</extensions>
+	</build>
+
+</project>
+

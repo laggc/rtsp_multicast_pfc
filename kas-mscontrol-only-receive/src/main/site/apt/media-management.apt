@@ -1,0 +1,185 @@
+   ------
+   Kurento Android media management
+   ------
+   ------
+   Date
+   ------
+   
+Kurento Android media management
+
+* Introduction
+  
+   There is a tradeoff between video quality and  computational resources 
+   required for media processing. This is specially true for mobile platforms,
+   where CPU, memory and bandwidth are very limited. 
+   
+   Assumed it is not possible to achieve desired media quality, the priority
+   becomes to optimize resources to get the maximum possible quality, although this
+   is a very fuzzy concept that requires better definition. Video quality can be 
+   quantitatively characterized through terms like the ones below:
+   	
+   		* Dimension
+   		
+  	 	* Quantization step
+  	 	
+  	 	* Sample rate
+  	 	
+  	 	* Transmission latency
+   	
+   Many others can be used. The important thing is that a limited amount of 
+   resources causes a tradeoff between above attributes and that makes necessary a
+   decision on what to prioritize.
+
+
+* Frame adaptation queue
+
+	Kurento Android SDK is specially conceived for conversational services, and consequently
+	latency becomes the main quality attribute. There is a natural tradeoff between latency and
+	sensitivity to jitter. It is easy to understand that when buffers are reduced in transmission
+	pipes, the stream is much more affected by delays in packets. This causes a quality degradation
+	in term of video continuity, as probability of frame loss increases.
+	
+	The frame adaptation queue is a FIFO buffer of <N> positions that discards oldest frames when full.
+	It is specially designed to achieve following objectives:
+	
+		* Adapt generation and transmission frame rates
+		
+		* Reduce jitter effects to improve video continuity for a given latency.
+		
+	The adaptation queue operates between the video source and sink. It receives frames from the camera
+	at generation rate and delivers to the network at target frame rate <Tfr>. There are two possible
+	operational modes
+	
+		* When generation rate is lower than target rate, the actual transmission rate will
+		equal generation. In this operation mode the queue is empty as frames are sent as they 
+		are received. Reception device is exposed completelly to jitter effect.
+		
+		* When generation rate (<Gfr>) is higher than target rate, one frame each <Gfr/Tfr>	has to be 
+		discarded. In this operation mode the queue is full and latency increases by a value <N> * 1/Tfr.
+		Transmission time for next frame is calculated as 
+		
+			[<tn = 1/Tfr * N + t_(n-N)>]
+			
+				* <tn>: Next transmission time
+				
+				* <N>: Queue size
+				
+				* <t_(n-N)>: Transmission time of frame <n-N>
+				
+			
+		 It has been found that Android camera is quite an important source of jitter. Video is delivered
+		 at 30 frames per second, but with high variability. Above formula is actually a jitter low 
+		 pass filter that improves time slots variability and hence a smooth video stream with the frame
+		 rate required for transmission.
+
+	
+* Optimal codec configuration	
+
+	Based in the estimated bandwidth of the active interface it is possible to optimize video quality,
+	providing a proper set of codec parameters for a given target frame rate and frame size requested 
+	by user application. 
+	
+	Frame rate and  bandwidth are directly related through the frame size. This is the mechanism
+	used by codecs to determine the compression required per frame, based in a target <bit_rate> and
+	<frame_rate>. As an example, to obtain 384000 bps(bits per second) with 15 fps(frames per second),
+	encoded frames must have a medium size of 25600 bits
+	
++----
+384000 bps / 15 fps = 25600 bpf (bits per frame)
++----
+	
+	Codecs are configured with a target <frame_rate> and <bit_rate>, but codification is quite a difficult
+	task and this target values are just tentative values. Next equation provides a way to estimate the
+	real bit_rate of a stream.
+	
++---
+real_bitrate = K * target_bitrate/targer_framerate * real_framerate
++---
+	
+	<K> is a correction factor associated to compression behavior. Generate frames with a 
+	precise size to meet target bandwidth requires to much computational resources, so 
+	normally frames are smaller and hence real <bit_rate>.
+	
+	A <real_framerate> must also be considered, as it can happen that the codec is unable to generate
+	frames fast enough (in less than 1/<Tfr>).
+	
+	Kurento Android SDK dynamically measures <K> factor and real <frame_rate> and adjust target <frame_rate>
+	and target <bit_rate>, so the real <bit_rate> approaches the target one, improving this way the video
+	quality as resources are optimized.
+
+
+
+* Jitter buffers
+	
+	Media packets received do not arrive exactly periodically, someone can arrive before an others
+	can arrive after we expect, this is we must know essentially about jitter.
+	Variations in packet arrival time (jitter) is mainly produced by the packet switched networks,
+	although the postprocessing of the arrived packets can affect also in the jitter,
+	because decode and other operations are so expensive in time
+	(notice, for example, that decode a hard video frame spends more time than decode a simple video frame).
+	
+	Jitter affects seriously the audio and video quality, although the audio case is more sensible than video case,
+	because silences or stops in the audio reduce too much the quality, but in video play a frame few milliseconds
+	before or after is not too important.
+	
+	To reduce this problem we have designed and implemented jitter buffers to improve the audio and video quality.
+	The main idea of these buffers is to add latency to decrement or delete the jitter.
+	
+	Because jitter is introduced by the network and the postprocessing, we have situated the jitter buffers
+	as near as possible of players. With this we have designed the jitter buffer as a shared data area where
+	the process (producer) that retrieve RTP packets and decode them puts the decode frames into this area
+	and the process (consumer) that play the frames take these decoded frames from the shared area.
+	This is common for both audio and video buffers. Then we are going to explain the specific problems
+	that have audio and video management and how we have solved these problems.
+	
+	
+	* <<Audio jitter buffer>>
+	
+		In audio case, we must bear in mind the temporal influence (audio samples are a wave discretization and by themselves
+		have no meaning, they are temporarily related to can rebuild the original audio wave), while with the video case
+		this is no too important because video frames are as a instant photo and only we must know which frame is older to play it before.
+		
+		Audio jitter buffer is designed as a queue that blocks consumer if there are not any audio frame and wake up it
+		when producer puts a new audio frame. Whit this implementation we can be in two cases:
+		
+			* If consumer is faster than producer there will be a lot of stops playing audio and the quality will be so bad.
+			
+			An audio frame is a set of audio samples which we must know the sample rate to play them correctly.
+			With this and assuming that a audio frame has 20 ms of audio,
+			the producer must spends at most 20 ms processing the frame and putting it into the buffer and the consumer must
+			spend playing the audio frame exactly 20 ms. If these conditions are not met, the audio quality will be so bad
+			and it is impossible improve it.
+			
+			* If producer is faster than consumer the queue will grow up too much and it will stock a undesirable latency.
+			
+			To solve this problem, we have designed a mechanism that compute the time that each frame is into the buffer
+			assuming that each frame can have a delay of <t_min>. The amount time of all frames is compute when a new frame arrives
+			and if this value is greater than a value named <patience> then the buffer is cleared before the new frame is put
+			into the buffer.
+				
+				[<Summation(Max(t_i - t_min, 0)) \> patience  \=\>  clear buffer>]
+			
+				* <t_i>: audio frame i time in buffer.
+				
+				* <t_min>: permitted delay by audio frame.
+			
+				[]
+				
+			[]
+	
+[./images/audio-jitter-buffer.jpeg] Audio jitter buffer
+	
+	
+	
+	* <<Video jitter buffer>>
+	
+	In video case, we must bear in mind that the data size we must manage and process is much greater than in audio case, and we have
+	noticed that this increases too much the cost in time. For this reason, the video jitter buffer is oriented to not stock too delay
+	and we reuse the data structures which store video frames.
+	
+	After a lot of tests with some Android devices, we have implemented the video jitter buffer as a fixed queue of size 1 and
+	2 data structures are used to store video frames. These structures are shared by producer and consumer and this improve a lot
+	memory usage and device performance.
+
+
+[./images/video-jitter-buffer.jpeg] Video jitter buffer

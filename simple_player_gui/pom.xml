@@ -1,0 +1,117 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>edu.urjc.pfc.rtsp.client.gui</groupId>
+	<artifactId>simple_player_gui</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>api_rtsp_multicast</name>
+	<description>Client API example using api_rtsp_multicast_client. Can not play video, only performs the multicast RTSP protocol.</description>
+
+	<developers>
+		<developer>
+			<id>laggc</id>
+			<name>L. Álvaro González</name>
+		</developer>
+	</developers>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- Dependencies Versions -->
+		<rtsp_multicast_client.version>0.0.2-SNAPSHOT</rtsp_multicast_client.version>
+		<slf4j-log4j12.version>1.6.4</slf4j-log4j12.version>
+		<gstreamer-java.version>1.5</gstreamer-java.version>
+
+		<!-- Plugins Versions -->
+		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+		<maven-compiler-plugin.source_target>1.6</maven-compiler-plugin.source_target>
+		<exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
+
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>edu.urjc.pfc.rtsp</groupId>
+			<artifactId>rtsp_multicast_client</artifactId>
+			<version>${rtsp_multicast_client.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j-log4j12.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.googlecode.gstreamer-java</groupId>
+			<artifactId>gstreamer-java</artifactId>
+			<version>${gstreamer-java.version}</version>
+		</dependency>
+
+	</dependencies>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${maven-compiler-plugin.source_target}</source>
+					<target>${maven-compiler-plugin.source_target}</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>${exec-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<mainClass>edu.urjc.pfc.rtsp.client.gui.SimpleClient</mainClass>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.2</version>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-4</version>
+				<configuration>
+				<descriptorRefs>
+					<descriptorRef>jar-with-dependencies</descriptorRef>
+				</descriptorRefs>
+				<archive>
+				<manifest>
+					<mainClass>edu.urjc.pfc.rtsp.client.gui.SimpleClient</mainClass>
+				</manifest>
+				</archive>
+				</configuration>
+				<executions>
+				  <execution>
+				    <phase>package</phase>
+				    <goals>
+				      <goal>single</goal>
+				    </goals>
+				</execution>
+				</executions>
+			</plugin>
+			
+			
+		</plugins>
+	</build>
+</project>

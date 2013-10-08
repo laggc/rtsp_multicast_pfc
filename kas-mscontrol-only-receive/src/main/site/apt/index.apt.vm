@@ -1,0 +1,285 @@
+   ------
+   Kurento Android MSControl
+   ------
+   ------
+   Date
+   ------
+
+Kurento Android MSControl
+
+* Introduction
+
+	Kurento Android MSControl is a sub-API of {{{../../kc-mscontrol/${kcMsControlVersion}}Kurento Commons MSControl}} adding 
+	Android specific features and media components.
+	
+[./images/kas-mscontrol.jpeg] kas-mscontrol API
+	
+* Simple and usable API
+
+	Kurento Android MSControl <<MediaSessionAndroid>> enables creation of two main 
+	categories of <<<Joinable>>> objects. 
+	
+		* <<NetworkConnection>>: Creates a bidirectional network delivery service with a remote
+		peer. Instances are created by calling method <<<createNetworkConnection()>>>. 
+		
+		* <<MediaComponentAndroid>>:  Provides a connection service to physical devices: 
+		camera, screen, microphone, etc. Instances are created by calling method <<<createMediaComponent()>>>. 
+		Physical device and media capabilities are set as parameter during instantiation. 
+	
+	<<MediaSessionAndroid>> instances are created with method <<<createMediaSession()>>> of
+   factory <<MSControlFactory>>. A set of media initialization parameters have to be provided
+   with environment information and user preferences. 
+
+* Parameters
+	
+	<<<Parameters>>> is a set of [key,value] pairs used to configure media components created
+	by Kurento MSControl. They not only provide a very simple configuration mechanism, but
+	they also enable easy API extensions. {{{./apidocs}Javadoc}} provides a complete usage reference, 
+	with clear indication of supported <<<Parameter>>> and valid ranges.
+		
+	<<<Parameters>>> instances are created with method <<<createParameters()>>> of factory
+	 <<MSControlFactory>> and populated with method <<<put()>>>, as shown in the code below.
+
++---	
+Parameters params = MSControlFactory.createParameters();
+Parameter param = ...;
+Object value = ...;
+params.put(param, value);
++---
+
+	There's also a special <<<Parameter>>> to indicate NO parameters:
+
++---
+Parameters.NO_PARAMETER
++---
+
+	Table below provides the list of supported <<<Parameter>>>
+
+
+*--------*-----------*----*-------*--------------*--------------------------------------------------*
+| <<Basic parameters>> | <<M/O>> | <<Type>> | <<Range>> | <<Default value>> | <<Description>> |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| NET_IF |  M | NetIF | [WIFI, MOBILE] | | Active network interface to be used. Can be WIFI or MOBILE. |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| LOCAL_ADDRESS | M | InetAddress | NA | |Local IP address of active interface. |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| MAX_BANDWIDTH | O | Integer | NET_IF.MOBILE:\ [50000,\ 384000]\ | NET_IF.MOBILE:\ 384000\ | MAX. bandwidth to be used in bps(bits per second). |
+|				|	|		  | NET_IF.WIFI:\ [50000,\ 3000000]	| NET_IF.WIFI:\ 3000000  |    	|	
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| STREAMS_MODES | O | Map\<MediaType,\ Mode\> | [SENDRECV, SENDONLY, RECVONLY] | SENDRECV | Connection mode for each media channel.|
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| MAX_DELAY | O | Integer | [0, MAX_INT] | 200 | Indicate the max delay for media reception in ms (miliseconds). |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| AUDIO_CODECS   | O | List\<AudioCodectype\> | [AMR, MP2, PCMU, PCMA] | [AMR, MP2, PCMU, PCMA] |Enabled audio codecs.  |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| VIDEO_CODECS   | O | List\<VideoCodectype\> | [H.263, MPEG4, H.264]| [H.263, MPEG4, H.264] |	Enabled video codecs. |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| <<Advanced parameters>> |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| FRAME_WIDTH | O | Integer | NA | 352 | Frame width in pixels.  |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| FRAME_HEIGHT | O | Integer | NA | 288 | Frame height in pixels.  |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| MAX_FRAME_RATE | O |Integer|  [1, MAX_INT] | 15 |MAX. frame rate to be used. |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| GOP_SIZE | O |Integer| [0, MAX_INT] | 6 | MAX. number of frames in a group of pictures, 0 for intra_only.  |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| FRAMES_QUEUE_SIZE | O | Integer | [2, MAX_INT] | 2 | MAX. number of frames will be buffered from the camera. |
+|					|	|		  |				 |	 |The bigger buffer size the bigger latency.     |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| STUN_HOST | O | String | NA |  | Stun server URL |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+| STUN_PORT | O | Integer | [1024, MAX_INT] | 3478 | Stun server port |
+*--------*-----------*----*-------*---------------*-------------------------------------------------+
+
+	(M: Mandatory; O: Optional)
+
+
+	An example:
+
++---
+Parameters params = MSControlFactory.createParameters();
+
+params.put(MediaSessionAndroid.NET_IF, NetIF.MOBILE);
+
+InetAddress localAddress =...;
+params.put(MediaSessionAndroid.LOCAL_ADDRESS, localAddress);
+
+int maxBW = 320000;
+params.put(MediaSessionAndroid.MAX_BANDWIDTH, maxBW);
+
+Map<MediaType, Mode> callDirection = new HashMap<MediaType, Mode>();
+callDirection.put(MediaType.VIDEO, Mode.SENDRECV);
+callDirection.put(MediaType.AUDIO, Mode.SENDRECV);
+params.put(MediaSessionAndroid.STREAMS_MODES, callDirection);
+
+ArrayList<AudioCodecType> audioCodecs = new ArrayList<AudioCodecType>();
+audioCodecs.add(AudioCodecType.AMR);
+audioCodecs.add(AudioCodecType.MP2);
+params.put(MediaSessionAndroid.AUDIO_CODECS, audioCodecs);
+
+ArrayList<VideoCodecType> videoCodecs = new ArrayList<VideoCodecType>();
+videoCodecs.add(VideoCodecType.H263);
+videoCodecs.add(VideoCodecType.MPEG4);
+params.put(MediaSessionAndroid.VIDEO_CODECS, videoCodecs);
+
+Integer frameWidth = ...;
+params.put(MediaSessionAndroid.FRAME_WIDTH, frameWidth);
+Integer frameHeight = ...;
+params.put(MediaSessionAndroid.FRAME_HEIGHT, frameHeight);
+
+int maxFR = 12;
+params.put(MediaSessionAndroid.MAX_FRAME_RATE, maxFR);
+
+int gopSize = 8;
+params.put(MediaSessionAndroid.GOP_SIZE, gopSize);
+
+int maxQueueSize = 3;
+params.put(MediaSessionAndroid.FRAMES_QUEUE_SIZE, maxQueueSize);
+
+String stunHost = "xtun.stun.com";
+int stunPort = 3478;
+params.put(MediaSessionAndroid.STUN_HOST, stunHost);
+params.put(MediaSessionAndroid.STUN_PORT, stunPort);
+
+
+MediaSessionAndroid mediaSession = MSControlFactory.createMediaSession(params);
++---
+
+* NetworkConnection
+
+	A <<<NetworkConnection>>> represents the component directly connected to the network. Contains
+	one stream for each media type (audio and video) and its main function is to relay data between
+	network and internal <<<Joinable>>> components.
+	
+	Network connections are created in idle state, unable to send or receive data. In order to 
+	setup a link with a remote peer, it is required a negotiation process where SDP packets are
+	interchanged between parties to set formats, IP address and ports. The <<<NetworkConnection>>> 
+	provides class <<<SdpPortManager>>>, able to handle SDP protocol, but requires an external protocol
+	to interchange SDP frames between peers.
+	
+	In this implementation, there is possibility to configure a <<<Stun Server>>> for not have problem with some NATs.
+	If the <<<Stun>>> is active, before negotiation process, the Stun confirms the public ip and ports to use on negotiation.
+
+	Kurento <<<UA>>> is able to manage SDP negotiation, and within Kurento Android SDK is the function
+	responsible to create and setup <<<NetworkConnection>>> instances.	
+	
+	More information about <<<NetworkConnection>>> and <<<SdpPortManager>>> can be found
+	at  {{{../../kc-mscontrol/${kcMsControlVersion}}Kurento Commons MSControl}} and within 
+	{{{http://www.jcp.org/en/jsr/detail?id=309}JSR309 documentation}}.
+
+* MediaComponentAndroid
+
+	<<<MediaComponentAndroid>>> represents an in/out device able to capture or play media.
+	There are two main categories:
+		
+		* A <<Player>> component  extracts media from its attached source and streams it through its
+		<<<Joinable>>> interface. If the component is joined to a <<<NetworkConnection>>>, 
+		the stream is transmitted to remote destination.
+	
+		* A <<Recorder>> component retrieves a media from its <<<Joinable>>> interface and plays the
+		stream to an output device attached to the component.
+	
+	It is important to notice that play and record actions are seen from the network point of view and
+	not from the user perspective. This makes the camera or microphone to be cataloged as players
+	and the screen or speaker as recorders.
+	
+	The API provides four different media components, that can be created by factory
+	<<<MediaSessionAndroid>>>. Each component requires its particular configuration.
+	
+		* <<Audio Player Component:>> Extracts audio from the microphone and sends it to all its
+		 <<<joinees>>>. Next code shows how to create this component.
+		
++---
+MediaComponentAndroid APC = mediaSession.createMediaComponent(MediaComponentAndroid.AUDIO_PLAYER, Parameters.NO_PARAMETER);
++---
+		
+		* <<Audio Recorder Component:>> Receive audio from one <<<joinee>>> and plays it on the speaker.
+		In order to create a instance next code has to be executed.
+		
++---	
+Parameters params = MSControlFactory.createParameters();
+params.put(MediaComponentAndroid.STREAM_TYPE, AudioManager.STREAM_MUSIC);
+MediaComponentAndroid ARC = mediaSession.createMediaComponent(MediaComponentAndroid.AUDIO_RECORDER, params);
++---
+
+		* <<Video Player Component:>> Extracts video from the camera and gives it to all its <<<joinees>>>.
+		This component is created with the next code.
+
++---
+View view = ...;
+int orientation = ...;
+int cameraFacing = ...;
+Parameters params = MSControlFactory.createParameters();
+params.put(MediaComponentAndroid.PREVIEW_SURFACE, view);
+params.put(MediaComponentAndroid.DISPLAY_ORIENTATION, orientation);
+params.put(MediaComponentAndroid.CAMERA_FACING, cameraFacing);
+MediaComponentAndroid VPC = mediaSession.createMediaComponent( MediaComponentAndroid.VIDEO_PLAYER, params);
++---			
+							
+		
+		* <<Video Recorder Component:>> Receives video from its <<<joinee>>> and plays it into a display.
+		To create this component next code is executed:
+
++---
+View view = ...;
+int displayWidth = ...;
+int displayHeight = ...;
+Parameters params = MSControlFactory.createParameters();
+params = MSControlFactory.createParameters();
+params.put(MediaComponentAndroid.VIEW_SURFACE, view);
+params.put(MediaComponentAndroid.DISPLAY_WIDTH, displayWidth);
+params.put(MediaComponentAndroid.DISPLAY_HEIGHT, displayHeight);
+MediaComponentAndroid VRC = mediaSession.createMediaComponent(MediaComponentAndroid.VIDEO_RECORDER, params);
++---
+
+
+
+
+* Media composition
+		
+	The most common composite joins <<<MediaComponent>>> with <<<NetworkConnection>>>. Both
+	are <<<Joinable>>> objects allowing dynamic compositions. It is possible to
+	join and unjoin different types of <<<MediaComponent>>> with a <<<NetworkConnection>>>,
+	even in started state. For example, we can unjoin a component
+	that feed audio to <<<NetworkConnection>>> in order to simulate a mute.
+	Notice each <<<MediaComponent>>> supports a single media type (AUDIO/VIDEO) and mode (SEND/RECV).
+	Special	care is required selecting appropriate media type and connection mode when joining
+	to a <<<NetworkConnection>>> selecting the correct stream:
+	
+		* The Audio Player Component must be join join with <<<NetworkConnection>>> like:
+		
++---
+APC.join(SEND, NC.getJoinableStream(audio))
++---
+		
+		
+		* The Audio Recorder Component must be join join with <<<NetworkConnection>>> like:
+		
++---
+ARC.join(RECV, NC.getJoinableStream(audio))
++---
+		
+		
+		* The Video Player Component must be join join with <<<NetworkConnection>>> like:
+		
++---
+VPC.join(SEND, NC.getJoinableStream(video))
++---
+		
+		
+		* The Video Recorder Component must be join join with <<<NetworkConnection>>> like:
+		
++---
+VRC.join(RECV, NC.getJoinableStream(video))
++---
+
+		[]
+	
+[./images/media-composition.png] Media Composition
+	
+	
+
+	
+	
+	

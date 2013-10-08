@@ -1,0 +1,342 @@
+/* Artfully masterminded by ZURB  */
+
+/* -------------------------------------------------- 
+   Table of Contents
+-----------------------------------------------------
+:: Shared Styles
+:: Page Name 1
+:: Page Name 2
+*/
+
+
+/* -----------------------------------------
+   Shared Styles
+----------------------------------------- */
+
+
+ 
+.clear {
+	clear:both;
+}
+.ocultar {
+	visibility:hidden !important;
+	height:0px !important;
+	width:0px !important;
+	margin:0px !important;
+	padding:0px !important;
+}
+
+.ocultar_simple{
+	visibility:hidden !important;
+}
+
+
+
+header h1  {
+	margin:50px 0 0 20px;
+	font-weight:  500;
+ }
+
+
+header h2  {
+	margin-top:0px;
+	margin-left:20px;
+	margin-bottom:50px;
+	font-size:24px;
+	font-weight:  300;
+}
+
+
+#barraLogos  {
+     background:  #2ba6cb;
+     padding:  22px 0;
+     margin: 10px 0 0 0;
+	 vertical-align:bottom;
+ }
+
+
+#barraLogos h3,  #barraLogos #barraLogos a  {
+     color:  #fff;
+ }
+
+
+#barraLogos a.top-right  {
+     position:  absolute;
+     top:  22px;
+     right:  15px;
+     color:  rgba(255,  255,  255,  0.5);
+ }
+
+
+#barraLogos a.top-right:hover  {
+     text-decoration:  underline;
+ }
+
+
+#barraLogos .block-grid li a  {
+     display:  block;
+ }
+
+
+#barraLogos .block-grid li a img  {
+     display:  block;
+     margin:  0 auto;
+ }
+ 
+ 
+ /*CONTENIDO ORBIT*/
+ 
+ .tituloCaja{
+	 margin-bottom:-12px;
+ }
+ 
+ .content {
+	  
+ }
+ 
+ #featured{
+	 margin-top:18px;
+	 margin-bottom:18px;
+	 
+	 border: 1px solid #000;
+ }
+ 
+.imagenMedia {
+	margin-top:10px;
+	height:300px;	
+	
+}
+
+.imagenMedia img{
+	max-height:300px;
+	margin: 10px 2% 0 2%;
+	max-width: 96%;
+	
+}
+
+ 
+ .infoMedia{
+	 margin-top:10px;
+ }
+ 
+ 
+.infoMedia .titular {
+	color:#2ba6cb;
+	margin:0 0 0 0;
+	font-size:14px;
+	font-weight:bold;
+ }
+ 
+ .infoMedia .contenido {
+	color:#000;
+	margin:0 0 10px 0; 
+	
+ }
+ 
+#recuadroIzq {
+	border: 1px solid #000;
+	height:460px;
+}
+ 
+ 
+ 
+
+
+@media only screen and (max-width: 767px)  {
+	#recuadroIzq {
+		height:inherit;
+	}	
+	
+	#barraLogos a.top-right  {
+     	display:  none;
+ 	}
+ }
+ 
+ #copyright  {
+     background:  #222222;
+     color:  #fff;
+     padding:  11px 0;
+ }
+
+
+#copyright p,  #copyright ul.inline-list  {
+     margin-bottom:  0;
+ }
+
+
+#copyright a  {
+     color:  #fff;
+ }
+ 
+.small-normal{
+	display: block;
+	padding: 6px 4px;
+	margin-top: -13px;
+	margin-bottom: 12px;
+	color: #fff;
+	font-size: 12px;
+	font-weight: bold;
+	visibility:hidden;
+}
+
+#urlTitulo{
+	color:#2ba6cb;
+	margin:0 0 0 30px;
+	font-size:14px;
+	font-weight:bold;
+}
+
+#urlContenido{
+	color:#000;
+	margin:0 0 10px 30px;
+}
+
+
+
+@media only screen and (max-width: 767px)  {
+	#labelInputImagen {
+		margin-top:15px;
+	}
+	
+	#labelIPMC{
+		margin-top:15px;
+	}
+	
+	#inputImagen{
+		
+	}
+	
+	#botonImagen{
+		margin-left:2px;
+	}
+	
+	#botonPath{
+		margin-left:2px;
+	}
+	
+	#labelIPMC{
+		margin-top:15px;
+	}
+	
+	
+	
+	#small_aux_path{
+		height:0px;
+		padding:0;
+		margin:0;	
+	}
+	
+	#small_aux_imagen{
+		height:0px;
+		padding:0;
+		margin:0;	
+	}
+	
+	
+}
+
+@media only screen and (min-width: 767px)  {
+	#labelInputImagen {
+		margin-top:0px;
+	}
+	#labelIPMC{
+		margin-top:0px;
+	}
+}
+
+
+.parrafoContenido {
+	margin:0;
+	
+}
+
+
+#barraLogos ul li {
+	width:18%;
+	margin:0 1% 0 1%;	
+}
+
+
+@media only screen and (max-width: 480px)  {
+	#barraLogos ul li {
+		width:48%;
+	}
+	
+	header h1 {
+		font-size:26px;
+		margin: 5px 0 0 0;
+		font-weight:bold;
+	}
+	
+	header h2 {
+		font-size:14px;
+		font-weight: 300;
+		margin: 0 0 15px 0;
+	}
+}
+
+#barraSuperior {
+	background: #222222;
+	min-height: 45px;
+	line-height: 45px;
+	margin: 0 0 5px 0;
+	padding: 0;
+	width: 100%;
+	position: relative;	
+}
+
+#barraLogos ul {
+	margin:0;	
+}
+
+
+#copyright img {
+	width:88px;
+	height:31px;
+	float:right;
+	margin:0 0 0 5px;
+}
+
+#copyright p {
+	margin: 5px 0 0 5px;
+}
+
+@media only screen and (max-width: 480px)  {
+	#copyright img {
+		float:left;
+	}
+}
+
+
+#parrafoError {
+	margin-top:30px;
+}
+
+#cuerpoError {
+	min-height:330px;
+}
+
+#mediasEmpty {
+	margin-top:20px;
+}
+
+
+
+
+
+/* -----------------------------------------
+   Page Name 1
+----------------------------------------- */
+
+
+
+
+/* -----------------------------------------
+   Page Name 2
+----------------------------------------- */
+
+
+
+
+
+

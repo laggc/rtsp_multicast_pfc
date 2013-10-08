@@ -1,0 +1,197 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.kurento.kas</groupId>
+	<artifactId>kas-mscontrol-only-receive</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	
+	<packaging>jar</packaging>
+
+	<name>Kurento Android MSControl Only Receive</name>
+	<description>MSControl implementation for Android.</description>
+	<url>http://www.kurento.com/docs/kas-mscontrol/${project.version}</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8 </project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		
+		 <sign.develop>true</sign.develop>
+
+		<!-- Dependency versions -->
+		<kc-mscontrol.version>2.0.2</kc-mscontrol.version>
+		<kas-media.version>1.2.3-SNAPSHOT</kas-media.version>
+		<kc-mediaspec-conversor.version>1.0.2</kc-mediaspec-conversor.version>
+		<kc-stun.version>1.0.2</kc-stun.version>
+		<android.version>4.1.2_r4</android.version>
+
+		<!-- Plugins versions -->
+		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.6</maven.compiler.target>
+
+	</properties>
+
+	<organization>
+		<name>Kurento</name>
+		<url>http://www.kurento.com</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>mparis</id>
+			<name>Miguel París Díaz</name>
+		</developer>
+	</developers>
+
+	<contributors>
+		<contributor>
+			<name>Javier López Fernández</name>
+		</contributor>
+		<contributor>
+			<name>Luis López Fernández</name>
+		</contributor>
+		<contributor>
+			<name>Raúl Benítez Mejías</name>
+		</contributor>
+	</contributors>
+
+	<mailingLists>
+		<mailingList>
+			<name>Kurento</name>
+			<subscribe>http://groups.google.com/group/kurento/subscribe</subscribe>
+			<post>http://groups.google.com/group/kurento/post</post>
+			<archive>http://groups.google.com/group/kurento/about</archive>
+		</mailingList>
+	</mailingLists>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.kurento.commons</groupId>
+			<artifactId>kc-mscontrol</artifactId>
+			<version>${kc-mscontrol.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.kurento.kas</groupId>
+			<artifactId>kas-media</artifactId>
+			<version>${kas-media.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.kurento.commons</groupId>
+			<artifactId>kc-mediaspec-conversor</artifactId>
+			<version>${kc-mediaspec-conversor.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>android</groupId>
+			<artifactId>android</artifactId>
+			<version>${android.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.0</version>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.1</version>
+				<executions>
+					<execution>
+						<id>bundle-sources</id>
+						<phase>package</phase>
+						<goals>
+							<!-- produce source artifact for main project sources -->
+							<goal>jar-no-fork</goal>
+
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>2.0</version>
+			</extension>
+		</extensions>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>kurento-snapshots</id>
+			<name>Kurento Snapshot Repository</name>
+			<url>http://repository.kurento.com/archiva/repository/snapshots/
+			</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>kurento-releases</id>
+			<name>Kurento Repository</name>
+			<url>http://repository.kurento.com/archiva/repository/internal/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.8</version>
+				<configuration>
+					<excludePackageNames>com.kurento.kas.media.ports:com.kurento.kas.media.exception:com.kurento.kas.media.profiles:com.kurento.kas.media.rx:com.kurento.kas.media.tx:com.kurento.mscontrol.kas.join:*.internal</excludePackageNames>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<distributionManagement>
+		<site>
+			<id>maven-site</id>
+			<url>scp://repository.kurento.com/var/www/kurento/site/kas-mscontrol/${project.version}
+			</url>
+		</site>
+		<repository>
+			<id>releases</id>
+			<name>Kurento releases repository</name>
+			<url>scp://repository.kurento.com/opt/tomcat/current/data/repositories/internal</url>
+		</repository>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Kurento snapshots repository</name>
+			<url>scp://repository.kurento.com/opt/tomcat/current/data/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<scm>
+		<connection>scm:http://kurento.googlecode.com</connection>
+		<developerConnection>scm:git:ssh://git@repository.kurento.com/kas/kas-mscontrol.git</developerConnection>
+		<url>https://repository.kurento.com/git/kurento-android-sdk/?p=kas-mscontrol.git</url>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>Kurento Android SDK License</name>
+			<url>http://www.kurento.com/license/kurento-android-sdk-license.html</url>
+			<distribution>repo</distribution>
+			<comments>Commercial license for Kurento Android SDK</comments>
+		</license>
+	</licenses>
+</project>

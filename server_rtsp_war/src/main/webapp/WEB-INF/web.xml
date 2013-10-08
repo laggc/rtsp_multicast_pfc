@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+
+
+	<display-name>Server</display-name>
+
+
+	<welcome-file-list>
+		<welcome-file>Admin.jsp</welcome-file>
+	</welcome-file-list>
+	<servlet>
+		<servlet-name>noExistServlet</servlet-name>
+		<jsp-file>/Admin.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>noExistServlet</servlet-name>
+		<url-pattern>/admin</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>noExistServlet2</servlet-name>
+		<jsp-file>/Error.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>noExistServlet2</servlet-name>
+		<url-pattern>/error</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>noExistServlet3</servlet-name>
+		<jsp-file>/Client.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>noExistServlet3</servlet-name>
+		<url-pattern>/client</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>noExistServlet4</servlet-name>
+		<jsp-file>/LightClient.jsp</jsp-file>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>noExistServlet4</servlet-name>
+		<url-pattern>/lightClient</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>log4j-init</servlet-name>
+		<servlet-class>edu.urjc.pfc.rtsp.server.servlets.Log4jInit</servlet-class>
+		<init-param>
+			<param-name>log4j-init-file</param-name>
+			<param-value>WEB-INF/log4j.properties</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+</web-app>

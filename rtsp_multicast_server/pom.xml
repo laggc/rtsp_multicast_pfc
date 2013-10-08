@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>edu.urjc.pfc.rtsp.server</groupId>
+	<artifactId>rtsp_multicast_server</artifactId>
+	<version>0.0.2-SNAPSHOT</version>
+	
+	<packaging>jar</packaging>
+
+	<name>rtsp_multicast_server</name>
+	<description>Asynchronous server for multicast RTSP protocol using Netty.</description>
+
+	<developers>
+		<developer>
+			<id>laggc</id>
+			<name>L. Álvaro González</name>
+		</developer>
+	</developers>
+
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- Dependencies Versions -->
+		<jna.version>3.4.0</jna.version>
+		<gstreamer-java.version>1.5</gstreamer-java.version>
+		<slf4j.version>1.6.4</slf4j.version>
+		<jain-sip-ri.version>1.2.167</jain-sip-ri.version>
+		<mobicents_rtsp.version>0.0.1-SNAPSHOT</mobicents_rtsp.version>
+
+		<!-- Plugins Versions -->
+		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+		<maven-compiler-plugin.source_target>1.6</maven-compiler-plugin.source_target>
+
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>${jna.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.googlecode.gstreamer-java</groupId>
+			<artifactId>gstreamer-java</artifactId>
+			<version>${gstreamer-java.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mobicents.rtsp</groupId>
+			<artifactId>mobicents_rtsp</artifactId>
+			<version>${mobicents_rtsp.version}</version>
+		</dependency>
+
+	</dependencies>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<source>${maven-compiler-plugin.source_target}</source>
+					<target>${maven-compiler-plugin.source_target}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

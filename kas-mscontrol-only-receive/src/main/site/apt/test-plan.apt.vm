@@ -1,0 +1,428 @@
+   ------
+   Kurento Android MsControl test plan
+   ------
+   ------
+   Date
+   ------
+   
+Kurento Android MsControl Test Plan
+
+  	[<<Conventions>>]
+	
+		[<Automation>] Each test indicates if an automated procedure is in place.
+		               Automated tests are JUnit based.
+		  
+		[<Pass criteria>] Pass criteria will provide a set of conditions to be 
+	                      verified in order to declare the test passed. False 
+	                      conditions will cause the test to be set as NOT PASSED.
+	                      
+	[<<Test setup>>]
+	
+		In order to execute automated test it is required an Android device connected
+		through an USB interface. Following commands are required in order to perform
+		tests
+		
++--------------------
+cd kas-mscontrol
+mvn install
+cd kas-mscontrol-test
+mvn clean install
++--------------------		 
+		
+		If more than one device is plug to the test host it will be required to identify
+		the target test device. This is particularly useful when test must be executed 
+		in multiple platforms
+		
++-----------------
+-Dandroid.device=deviceSerialNumber
++-----------------
+
+
+
+* Video Streaming Tests
+
+	Kurento Android MsControl must provide video streaming support including 
+	codification/decodification and RTP transmission/reception. Several frame
+	rates and formats (dimensions) must be tested.
+
+
+** Automation
+	
+	Streaming tests are based on a loopback flow (as shown in the chart below)
+	that allow us automate them.
+	A RAW test source will generate synthetic video frames that are encode and
+	transfered over RTP through the local interface. Decoded frames will be injected 
+	into a video analyzer that will check the media characteristics.
+
++-----------------
+
+  +----------------+    +--------+    +--------+
+  |     Test       |____| ENCODE |____| RTP TX |______
+  | video source   |    |        |    |        |     |
+  +----------------+    +--------+    +--------+     |
+                                                  LOOPBACK
+  +----------------+   +--------+   +--------+       |
+  |      Test      |___| DECODE |___| RTP RX |_______|
+  |   video sink   |   |        |   |        |
+  +----------------+   +--------+   +--------+
+        |                 |              |
+        |                 |              |
+  +----------------+   +----------+ +----------+ 
+  |     video      |   |  codec   | |    RTP   |
+  |    analysis    |   | analysis | | analysis |
+  +----------------+   +----------+ +----------+
+
++-----------------
+
+
+** Features to check
+
+	* <<Frame rate>>: Verify the real frame rate (rfr) is
+	close to the target frame rate (tfr). This implies that the differences
+	between deliver frame times has a normal distribution over 1/tfr. Examples:
+
+		* with a target frame rate of 2 fps, the deliver frame times
+		in seconds can be 0, 0.2, 1, 1.2, 2, 2.2 ... The real frame rate is 2fps,
+		but this is not a normal distribution and it must not pass the test.
+		
+		* with a target frame rate of 2 fps, the deliver frame times
+		in seconds can be 0, 0.4, 0.9, 1.5, 2, 2.6 ... The real frame rate is 2fps,
+		and it follows a normal distribution over 0.5s, so it must pass the test.
+
+	* <<Frame sequence>>: Verify if frames are delivered in an ordered sequence.
+
+	* <<Frame timestamp>>: verify frames PTS correspond to the
+	frame arrival time and there is no drift from theoretical
+	value. For this we use <<skew>> term (skew is a measure of how late (or early)
+	the current packet is for the total conversation (relative to the nominal packet rate).)
+	Skew values must have a normal distribution over 0.
+
+	* <<Bit rate>>: Verify the bit rate is aligned with configured value.
+
+	* <<Frame dimension>>: Verify the frame dimensions correspond to configured value.
+
+	* <<Frame content>>: Verify the frame content is the same (with an acceptable error) to
+	transmitted content.
+
+
+** Generic Pass criteria
+
+	* <<Frame rate>>
+
+		* Difference between target frame rate (tfr) and average real frame rate (rfr) must be less than 1
+		(abs(tfr - rfr) \< 1).
+
+		* Differences between the PTSs of contiguous frames must follow the next distribution:
+		
+			[< [-inf, 3tr/4) [3tr/4, 9tr/10) [9tr/10, 11tr/10) [11tr/10, tr+3tr/4) [3tr+tr/4, inf) >], where:
+
+			\{[9tr/10, 11tr/10)\} \> 85%
+			
+			\{[-inf, 3tr/4), [3tr+tr/4, inf)\} \< 5%
+			
+				* <inf>: infinity.
+				
+				* <tr>: 1 / target_frame_rate.
+				
+				* <\{i1, i2, ...\}>: percentage of frames in intervals i1, i2, ...
+
+		[]
+
+	* <<Frame sequence>>: each frame must have a PTS greater than the PTS of the previous frame.
+
+	* <<Frame timestamp>>: skew values must follow the next distribution:
+
+		[< // [-inf, -3tr/2) [-3tr/2, -tr/2) [-tr/2, tr/2) [3tr/2, inf) [3tr/2, inf) >], where:
+
+			{[-tr/2, tr/2)} \> 90%
+			
+			{[-inf, -3tr/2), [3tr/2, inf)} \< 5%
+			
+				* <inf>: infinity.
+				
+				* <tr>: 1 / target_frame_rate.
+				
+				* <\{i1, i2, ...\}>: percentage of frames in intervals i1, i2, ...
+
+	* <<Bit rate>>: Difference between target bit rate (tbr) and average real bit rate (rbr) must be less than 20%
+	(abs(tbr - rbr) \< 0.2*tbr).
+
+	* <<Frame dimension>>: the size of received frames must be equals that the size set to profile.
+
+	* <<Frame content>> the average difference between the pixels of received frames and their
+	corresponding source frames in ARGB must be less than an "energy" of 20.
+
+	[]
+
+	Each test can also have its specific pass criteria for each feature, even change the above.
+
+
+
+
+** MPEG4 Streaming Support
+
+	[<<Test Procedure>>]
+	
+		Send a synthetic dummy video stream during 30 seconds with the next profiles:
+
+		[[1]] <<mpeg4 SVGA 800x600@3fps 1000kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.VideoStreamingTestCase#testMpeg4SVGA1000>>>
+			
+			SUCCESS: no. Criteria not passed:
+
+				* Frame timestamp.
+
+		[[2]] <<mpeg4 VGA 640x480@7fps 700kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.VideoStreamingTestCase#testMpeg4VGA700>>>
+			
+			SUCCESS: yes
+
+		[[3]] <<mpeg4 CIF 352x288@15fps 384kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.VideoStreamingTestCase#testMpeg4CIF384>>>
+			
+			SUCCESS: yes
+
+		[[4]] <<mpeg4 QCIF 176x144@30fps 192kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.VideoStreamingTestCase#testMpeg4QCIF192>>>
+			
+			SUCCESS: yes      
+
+	[]
+
+ 	[<<Pass Criteria>>]
+ 	
+		All profiles must pass generic criteria.
+
+
+** H.263 Streaming Support
+
+	[<<Test Procedure>>]
+
+		Send a synthetic dummy video stream during 30 seconds with the next profiles:
+
+		[[1]] <<h263 SVGA 800x600@3fps 1200kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.VideoStreamingTestCase#testH263SVGA1200>>>
+			
+			SUCCESS: no. Criteria not passed:
+
+				* Frame timestamp.
+
+		[[2]] <<h263 VGA 640x480@7fps 800kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.VideoStreamingTestCase#testH263VGA800>>>
+			
+			SUCCESS: yes
+
+		[[3]] <<h263 CIF 352x288@15fps 400kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.VideoStreamingTestCase#testH263CIF400>>>
+			
+			SUCCESS: yes
+
+		[[4]] <<h263 QCIF 176x144@30fps 200kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.VideoStreamingTestCase#testH263QCIF200>>>
+			
+			SUCCESS: yes
+
+	[]
+
+ 	[<<Pass Criteria>>]
+ 	
+		All profiles must pass generic criteria.
+
+
+
+** H.264 Streaming Support
+
+	[<<Test Procedure>>]
+
+		Send a synthetic dummy video stream during 30 seconds with the next profiles:
+
+		[[1]] <<h264 SVGA 800x600@3fps 600kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.VideoStreamingTestCase#testH264SVGA600>>>
+			
+			SUCCESS: no (Test infrastructure error).
+
+		[[2]] <<h264 VGA 640x480@7fps 384kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.VideoStreamingTestCase#testH264VGA380>>>
+			
+			SUCCESS: no (Test infrastructure error).
+
+		[[3]] <<h264 CIF 352x288@15fps 96kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.VideoStreamingTestCase#testH264QCIF64>>>
+			
+			SUCCESS: no (Test infrastructure error).
+
+		[[4]] <<h264 QCIF 176x144@30fps 64kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.VideoStreamingTestCase#>testH264CIF96>>>
+			
+			SUCCESS: no (Test infrastructure error).
+
+	[]
+
+ 	[<<Pass Criteria>>]
+ 	
+		All profiles must pass generic criteria.
+
+
+
+
+* Audio Streaming Tests
+
+	Kurento Android MsControl must provide audio streaming support including 
+	codification/decodification and RTP transmission/reception.
+
+** Features to check
+
+	* <<Frame sequence>>: Verify if audio frames are delivered in an ordered sequence.
+
+	* <<Bit rate>>: Verify the bit rate is aligned with configured value.
+
+	* <<Frame content>>: Verify the audio frame content is the same (with an acceptable error) to
+	transmitted content (In the future, because there are problems with AMR and MP2).
+
+** Generic Pass criteria
+
+	* <<Frame sequence>>: each frame must have a PTS greater than the PTS of the previous frame.
+
+	* <<Bit rate>>: Difference between target bit rate (tbr) and average real bit rate (rbr) must be less than 5%
+	(abs(tbr - rbr) \< 0.05*tbr).
+
+
+
+
+** AMR Streaming Support
+
+	[<<Test Procedure>>]
+
+		Send a synthetic dummy audio stream during 30 seconds with the next profiles:
+
+		[[1]] <<amr 12.2kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.AudioStreamingTestCase#testAMR>>>
+			
+			SUCCESS: yes
+
+	[]
+
+ 	[<<Pass Criteria>>]
+ 	
+		All profiles must pass generic criteria.
+
+
+** MP2 Streaming Support
+
+	[<<Test Procedure>>]
+	
+		Send a synthetic dummy audio stream during 30 seconds with the next profiles:
+
+		[[1]] <<mp2 64kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.AudioStreamingTestCase#testMP2>>>
+			
+			SUCCESS: yes
+
+	[]
+
+ 	[<<Pass Criteria>>]
+ 	
+		All profiles must pass generic criteria.
+
+
+** PCMU Streaming Support
+
+	[<<Test Procedure>>]
+
+		Send a synthetic dummy audio stream during 30 seconds with the next profiles:
+
+		[[1]] <<pcmu 64kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.AudioStreamingTestCase#testPCMU>>>
+			
+			SUCCESS: yes
+
+	[]
+
+ 	[<<Pass Criteria>>]
+ 	
+		All profiles must pass generic criteria.
+
+
+** PCMA Streaming Support
+
+	[<<Test Procedure>>]
+
+		Send a synthetic dummy audio stream during 30 seconds with the next profiles:
+
+		[[1]] <<pcma 64kbps>>
+
+			Automated by <<<com.kurento.mscontrol.kas.test.AudioStreamingTestCase#testPCMA>>>
+			
+			SUCCESS: yes
+
+	[]
+
+ 	[<<Pass Criteria>>]
+ 	
+		All profiles must pass generic criteria.
+
+
+
+
+
+
+* Buffer tests
+
+	Media buffers are useful to improve media quality as is shown in section X.
+	To ensure these buffers and the associated algorithms work correctly, we must force
+	the bad situations for which the buffers are used.
+
+** Reordering test
+
+** Jitter buffer test
+
+** Synchronization test
+
+
+
+* Media negotiation tests
+
+
+* Resource management tests
+
+** Port lock & release
+
+
+* Joinable tests
+
+	These tests must ensure that the behaviour of joinable objects arte the specified in kc-mscontrol doc.
+
+
+* MediaComponent interconnection
+
+* Join micro to RTP
+
+** Join Camera to RTP
+
+** Join RTP to speaker
+
+** Join RTP to loudspeaker
+
+** Join RTP to screen
+
+
+
+Change camera test
+
+Destoy and create new surfaces test
+

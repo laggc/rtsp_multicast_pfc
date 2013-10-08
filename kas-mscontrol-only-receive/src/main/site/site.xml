@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Kurento Android MSControl">
+	<bannerLeft>
+		<name>Kurento Project</name>
+		<src>http://www.kurento.com/sites/all/themes/bartikplus/logo.png
+		</src>
+		<href>http://www.kurento.com</href>
+	</bannerLeft>
+
+	<body>
+		<links>
+			<item name="Kurento" href="http://www.kurento.com/" />
+		</links>
+		<menu name="Kurento MsControl">
+			<!--item name="Media management" href="./media-management.html" /-->
+			<item name="Media buffering" href="./buffer-controller.html" />
+			<item name="Test plan" href="">
+				<item name="Streaming" href="./test-plan.html" />
+			</item>
+		</menu>
+		<menu ref="reports" />
+
+	</body>
+</project>

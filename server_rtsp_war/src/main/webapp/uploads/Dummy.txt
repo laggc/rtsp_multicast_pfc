@@ -1,0 +1,1 @@
+Creo este fichero para que en la estructura de Tomcat me cree la carpeta uploads, ya que si está vacia la descarta.

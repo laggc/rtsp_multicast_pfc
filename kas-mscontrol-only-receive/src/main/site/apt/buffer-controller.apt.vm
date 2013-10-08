@@ -1,0 +1,241 @@
+	------
+	Kurento Android media buffer
+	------
+	------
+	Date
+	------
+
+Kurento Android Buffer Management
+
+* Introduction
+
+	Buffers are data storage units intended to avoid media quality degradation
+	due to transport delays or bad temporization. There is a natural tradeoff 
+	between latency and	sensitivity to jitter. The better the quality required
+	the larger the buffer (and hence the latency). It is easy to understand
+	that when buffers are reduced in transmission pipes, the stream is much
+	more affected by delays in packets, causing quality degradation.
+	
+	Latency is the delay between PDU generation and display. Large latencies
+	are acceptable for streaming services, but conversational quality, required
+	for telephone call services, allows a maximum delay of 250 ms. 
+	Above that delay figures conversation becomes difficult and requires trained 
+	speakers.
+		  
+	Picture below shows a typical multimedia transmission chain, where media flows from 
+	the source (origin) to the sink (destination). Buffers appears twice in this 
+	path to provide multiple functions: the transmission buffer, close to the source 
+	and the reception buffer, close to the sink
+		
+[./images/multimedia-chain.png] Multimedia Chain
+
+* Buffer classification
+
+** Source buffer
+
+	It is intended to provide pace adaptation from media source to transport
+	channel, including following functions:
+	
+		* <<PDU scheduling>>: Set up a timer to deliver data to transport channel
+		with negotiated periodicity. The scheduler provides a filter to the 
+		jitter injected by the source. 
+		
+		* <<PDU discard>>: Frame discarding takes place when 
+		generation pace is greater than transmission rate. This could be caused
+		by a negotiated transmission rate or because the generating device is 
+		unable to encode frames at the generation rate.
+		
+	Kurento Android SDK is specially conceived for conversational services, 
+	and consequently latency becomes the main quality attribute. It
+	implements a frame adaptation queue as a FIFO buffer of <N> positions
+	that discards oldest frames when full. It is specially designed to achieve
+	following objectives:
+	
+		* Adapt generation and transmission frame rates
+		
+		* Reduce jitter effects to improve video continuity for a given latency.
+		
+	The adaptation queue operates between the video source and transport channel.
+	It receives frames from the camera at generation rate and delivers them to
+	the network at target frame rate <Tfr>. There are two possible
+	operational modes
+	
+		* When generation rate is lower than target rate, the actual transmission rate will
+		equal generation. In this operation mode the queue is empty as frames are sent as they 
+		are received. Reception device is exposed completelly to jitter effect.
+		
+		* When generation rate (<Gfr>) is higher than target rate, one frame each <Gfr/Tfr>	has to be 
+		discarded. In this operation mode the queue is full and latency increases by a value <N> * 1/Tfr.
+		Transmission time for next frame is calculated as 
+		
+			[<tn = 1/Tfr * N + t_(n-N)>]
+			
+				* <tn>: Next transmission time
+				
+				* <N>: Queue size
+				
+				* <t_(n-N)>: Transmission time of frame <n-N>
+				
+			
+		 It has been found that Android camera is quite an important source of jitter. Video is delivered
+		 at 30 frames per second, but with high variability. Above formula is actually a jitter low 
+		 pass filter that improves time slots variability and hence a smooth video stream with the frame
+		 rate required for transmission.
+		
+** Reception buffer
+
+	This buffer is placed as the entry point of the sink. Its main 
+ 	objective is to minimize transport problems affecting to  communication
+ 	quality. Main sources of quality degradation are:
+
+		* <<Packet loss>>: UDP is preferred protocol for media transfer due to 
+		real time requirements, but it does not assures delivery. Missing 
+		packets causes information loss and hence a severe quality degradation.
+		Retransmission is not an alternative for real time environments, so 
+		error correction mechanism is the only alternative to this failure.
+		
+		* <<Out of sequence reception>>: IP networks does not assure in-sequence
+		delivery and very often packets arrive out of sequence. This problem can
+		be solved with a sorting buffer.
+	
+		* <<Jitter>>: According to Wikipedia, jitter is a deviation from true 
+		periodicity of an assumed periodic signal in electronics and
+		telecommunications, often in relation to a reference clock source.
+		Jitter causes minor problems in the WWW, but it is quite relevant in
+		real time services, like multimedia transmission. Jitter buffer is the
+		tool to reduce the effect of this problem on quality.
+		
+		
+	Reception buffer consist of several sub-buffers, each one intended to
+	reduce the effects of a single problem
+
+*** Sorting buffer
+ 
+ 	Intended to provide to the sink a sorted sequence of packets. This buffer
+ 	stores packets for a given period of time when a missing sequence number
+ 	is detected. If the lost sequence arrives in time is placed in its possition
+ 	and the whole storage is delivered to the next state.
+ 	It has been found a buffer with 5 (~100ms) slots is enough to reduce this
+ 	problem to the same level caused by actual packet loss
+ 	
+  
+*** Jitter buffer
+ 
+ 	This buffer is intended to absorb jitter effects just before media is delivered
+ 	to player device. It receives  a periodic signal with high deviation on frames
+ 	from its target timestamp. The jitter buffer behaves as a low pass filter that
+ 	reduces deviation from period. Jitter reduction is directly  related to latency.
+ 	The greater the jitter, the greater the latency required to reduce it.
+ 	
+ 	Given an arrival difference distribution as shown in figure below, assuming there
+ 	is no buffer size limitation, the latency is the maximum delay found during the
+ 	transmission interval. During a transient period of time the media quality will
+ 	be degradated until the buffer absorbs all jitter effects. From that moment the
+ 	quality will experiment a significant improvement. It is important to notice 
+ 	quality can still be bad due to other transport effects, like packet loss.
+ 	
+
+[./images/jitter-distribution.png] Jitter distribution example
+	
+ 	Jitter is quite variable with time due to the bursty nature of data packet
+ 	transmission. For that reason a jitter buffer should implement mechanisms to
+ 	recover latency during low jitter periods. This is particularly important
+ 	when the buffer must provide conversational quality
+ 	
+ 	There are several strategies for latency reduction. Next figure shows how 
+ 	latency evolves when buffer delivery pace is made dependent on buffer
+ 	size, as expressed by formula
+ 	
+ 		[<next_pts = frame_rate * e^(-k·s)>]
+ 			
+ 			* <next_pts>: Next transmission timestamp
+ 			
+ 			* <frame_rate>: Rate at which frames are expected from transport layer
+ 			
+ 			* <s>: Buffer size
+ 			
+ 			* <k>: Recovery constant
+
+	[]
+	
+[./images/latency-recovery.png] Accumulated delay			
+ 			
+ 	This latency recovery strategy accelerates delivery pace  after a reception
+ 	burst  (transfer has been delayed and all data is delivered at the same time).
+ 	An increase of 10-20% in display speed does not causes a media quality 
+ 	degradation sensed by human and provides a smooth mechanism to recover
+ 	from a data burst
+ 	
+ 	There are two special cases, where k=0 and k->infinite
+ 	
+ 		* <<k=0>>: Means no latency recovery. Frame presentation time are constant
+ 		and independent of latency. This strategy causes maximum delay and best
+ 		protection against jitter. It is the standard strategy for streaming
+ 		services, but not valid in conversational ones.
+ 		
+ 		* <<k->inf>>: Means 0-latency. Frames are given to presentation device
+ 		at full speed. It is equivalent to a PDU discard. Just the same as if
+ 		buffer maximum size where set to 0.
+ 		
+ 	Selection of recovery constant depends on requirements and technological 
+ 	limitations.Android audio devices does not allow to change sample rate and
+ 	hence, no latency recovery is possible as k != 0 is not allowed. This 
+ 	limitation forces any Android service to provide PDU discarding mechanism if
+ 	latency must be controlled.
+ 	
+ 	After several test it has been shown continuous frame drop causes more
+ 	degradation to communication quality than a single drop of multiple frames.
+ 	For that reason it has been designed the following algorithm
+ 	
+ 	[ Reception admits  delay below certain limit. A user can stand a small delay
+ 	for a long time or big delay for short times. Figure below shows how delay
+ 	is accumulated in the buffer associated to an Android audio device
+ 	using a No-recovery strategy. The area below the latency graph can be seen
+ 	as the user "Patient". When the buffer reaches the user's patient limit it 
+ 	changes strategy to 0-latency, causing a buffer flush and hence a gap in 
+ 	media. When buffer size reaches 0 strategy switches back to No-recovery]
+ 	
+ 	[]
+
+[./images/patient.png] Accumulated delay
+ 	
+ 	This buffer operation allows jitter absorption with a significant quality
+ 	improvement. The effect in conversation are constant gaps with a period 
+ 	depending on accumulated jitter.
+ 	  
+* Buffer synchronization
+
+	Multimedia communications usually consist of multiple channels that must be
+	synchronized. Synchronization can be achieved multiplexing all channels over
+	the same RTP connection, but this is not recommended by the standard and 
+	usually they are transported over separate connection. High traffic networks
+	with no QoS considerations will inject high jitter levels causing 
+	communication degradation due to lack of synchronization.
+		
+	In order to keep communication synchronized it is required a common control
+	function for all reception buffers. Synchronization will improve quality at
+	a price, as individual jitter from individual  buffers is added, causing a
+	latency increase.
+	
+	The simplest way to keep synchronized a set of buffers is to keep track of 
+	last available PTS to be presented. We call this the stop PTS
+	
+		[stop_pts = MIN last_pts(i) ( For all i=buffers)]
+		
+	Attribute <next_pts> defines next data to be played. As PDU timestamps of
+	each buffer does not necessarily are multiples, the controller 
+	notifies delivery by sending a request to deliver all data which pts is
+	lower or equal than <next_pts>
+	
+		
+	The controller wakes at a given time <time_current> and verifies if <stop_pts>
+	is greater than <next_pts> plus the sleeping time (time since last delivery slot).
+	If last condition is true means all buffers contain	data to be presented for
+	the given pts and the controller sends a request to deliver  all frames with pts
+	lower or equal to <next_pts>. The controller then increments <next_pts> by the
+	sleeping time and waits for the next delivery slot.
+	
+	If <stop_pts> is lower than <next_pts> plus sleeping time means there is 
+	missing data in one or more buffers. In that case the controller goes back
+	to sleep leaving <next_pts> unaltered.
+	

@@ -1,0 +1,26 @@
+/target
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+.dia
+.jpg
+.jpeg
+.png
+.prefs
+
+.project
+.classpath
+.settings
+.externalToolBuilders
+proguard.cfg
+project.properties
+target/
+gen/
+bin/
+.DS_Store
+.directory
+.buildpath
