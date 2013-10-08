@@ -8,7 +8,7 @@
 	<packaging>jar</packaging>
 
 	<name>api_rtsp_multicast</name>
-	<description>Client API example using api_rtsp_multicast_client. Can not play video, only performs the multicast RTSP protocol.</description>
+	<description>Client API example using the project rtsp_multicast_client.</description>
 
 	<developers>
 		<developer>

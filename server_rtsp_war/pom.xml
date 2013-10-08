@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<name>server_rtsp_war</name>
-	<description>Web application that implements a multicast RTSP server using the API api_rtsp_multicast.</description>
+	<description>Web application that implements a multicast RTSP server using the project rtsp_multicast_server</description>
 
 	<developers>
 		<developer>
