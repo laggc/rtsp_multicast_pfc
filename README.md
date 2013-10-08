@@ -6,10 +6,13 @@ Service RTSP Multicast
 
 This system contains the following projects:
 
-* **app_kmc_player:**
-* **kas-mscontrol-only-receive:**
-* **mobicents_rtsp:**
-* **rtsp_multicast_client:**
-* **rtsp_multicast_server:**
-* **server_rtsp_war:**
-* **simple_player_gui:**
+* **app_kmc_player:** client Android using the project rtsp_multicast_client.
+* **kas-mscontrol-only-receive:** Kurento MSControl implementation for Android. This version has been modified to only receive.
+* **mobicents_rtsp:** asynchronous client-server API for multicast RTSP protocol using Netty.
+* **rtsp_multicast_client:** asynchronous client for multicast RTSP protocol using Netty.
+* **rtsp_multicast_server:** Asynchronous server for multicast RTSP protocol using Netty.
+* **server_rtsp_war:** web application that implements a multicast RTSP server using the project rtsp_multicast_server
+* **simple_player_gui:** client example using the project rtsp_multicast_client.
+
+
+
