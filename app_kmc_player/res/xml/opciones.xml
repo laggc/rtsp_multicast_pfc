@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/preference_server_settings" >
+        <EditTextPreference
+            android:defaultValue="@string/preference_ip_defaultValue"
+            android:dialogTitle="@string/preference_ip_dialogTitle"
+            android:key="@string/preference_ip_key"
+            android:summary=""
+            android:title="@string/preference_ip_title" />
+        <EditTextPreference
+            android:defaultValue="@string/preference_port_rtsp_defaultValue"
+            android:dialogTitle="@string/preference_port_rtsp_dialogTitle"
+            android:inputType="number"
+            android:key="@string/preference_port_rtsp_key"
+            android:summary=""
+            android:title="@string/preference_port_rtsp_title" />
+        <EditTextPreference
+            android:defaultValue="@string/preference_port_http_defaultValue"
+            android:dialogTitle="@string/preference_port_http_dialogTitle"
+            android:inputType="number"
+            android:key="@string/preference_port_http_key"
+            android:summary=""
+            android:title="@string/preference_port_http_title" />
+
+        <ListPreference
+            android:defaultValue="@string/preference_tiemposPing_defaultValue"
+            android:dialogTitle="@string/preference_tiemposPing_dialogTitle"
+            android:entries="@array/tiemposPing"
+            android:entryValues="@array/tiemposPing"
+            android:key="@string/preference_tiemposPing_key"
+            android:summary=""
+            android:title="@string/preference_tiemposPing_title" />
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/preference_player_settings" >
+        <EditTextPreference
+            android:defaultValue="@string/preference_port_teardown_defaultValue"
+            android:dialogTitle="@string/preference_port_teardown_dialogTitle"
+            android:inputType="number"
+            android:key="@string/preference_port_teardown_key"
+            android:summary=""
+            android:title="@string/preference_port_teardown_title" />
+        <EditTextPreference
+            android:defaultValue="@string/preference_delay_video_defaultValue"
+            android:dialogTitle="@string/preference_delay_video_dialogTitle"
+            android:inputType="number"
+            android:key="@string/preference_delay_video_key"
+            android:summary=""
+            android:title="@string/preference_delay_video_title" />
+        <EditTextPreference
+            android:defaultValue="@string/preference_delay_audio_defaultValue"
+            android:dialogTitle="@string/preference_delay_audio_dialogTitle"
+            android:inputType="number"
+            android:key="@string/preference_delay_audio_key"
+            android:summary=""
+            android:title="@string/preference_delay_audio_title" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

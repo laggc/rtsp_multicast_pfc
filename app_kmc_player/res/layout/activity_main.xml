@@ -1,0 +1,132 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity" >
+
+    <!-- BARRA NEGRA DE ESTADO -->
+
+    <LinearLayout
+        android:id="@+id/barraEstado"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        
+        android:background="@drawable/backrepeat"
+        android:tileMode="repeat"
+        android:baselineAligned="false"
+        android:paddingBottom="3dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="3dp" >
+
+        <ImageView
+            android:id="@+id/iv_stateWifi"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:contentDescription="@string/descWifiState"
+            android:src="@drawable/signallight" />
+
+        <ImageView
+            android:id="@+id/iv_stateServer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="1"
+            android:contentDescription="@string/descServerState"
+            android:src="@drawable/cloudlight" />
+    </LinearLayout> <!-- BARRA NEGRA DE ESTADO -->
+
+    <WebView
+        android:id="@+id/webkit"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/barraEstado"
+        android:layout_marginTop="20dp" />
+
+    <!-- TEXTO BIENVENIDA -->
+
+    <ScrollView
+        android:id="@+id/scrollTextoBienvenida"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/barraEstado" >
+
+        <LinearLayout
+            android:id="@+id/textoBienvenida"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="20dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="20dp" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" >
+            </TextView>
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" >
+            </TextView>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- TEXTO BIENVENIDA -->
+
+
+    <!-- TEXTO NO MEDIAS -->
+
+    <RelativeLayout
+        android:id="@+id/textoNoMedia"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/barraEstado" >
+
+        <TextView
+            android:id="@+id/textViewNoMedia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" 
+            android:textColor="@color/darkGrey">
+        </TextView>
+    </RelativeLayout>
+
+    <!-- TEXTO NO MEDIAS -->
+
+</RelativeLayout>

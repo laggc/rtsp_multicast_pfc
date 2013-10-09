@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- GENERALES -->
+    <string name="app_name">KMC Player</string>
+
+    <!-- MAIN ACTIVITY -->
+    <string name="descWifiState">Estado de la conexión WIFI</string>
+    <string name="descServerState">Estado de la conexión con el servidor.</string>
+
+    <!-- MAIN ACTIVITY - MENU -->
+    <string name="menu_save">Guardar</string>
+    <string name="menu_exit">Salir</string>
+    <string name="menu_config">Configuración</string>
+    <string name="menu_wifi">WIFI</string>
+    <string name="menu_develop">Modo Desarrollo</string>
+    
+     <!-- PLAYER ACTIVITY - MENU -->
+     <string name="menu_back">Volver</string>
+
+    <!-- DEVELOP ACTIVITY -->
+    <string name="title_activity_develop">Terminal</string>
+    <string name="buttonPlay">PLAY</string>
+    <string name="editTextUri">rtsp://193.168.1.109:5454/hola</string>
+
+    <!-- CONFIG ACTIVITY -->
+    <string name="title_activity_config">Configuración</string>
+    <string name="preference_server_settings">CONFIGURACIÓN DEL SERVIDOR</string>
+    <string name="preference_player_settings">CONFIGURACIÓN DE REPRODUCCIÓN</string>
+    <string name="preference_ip_key">preference_ip_key</string>
+    <string name="preference_ip_title">IP del servidor</string>
+    <string name="preference_ip_dialogTitle">Introduzca valor</string>
+    <string name="preference_ip_defaultValue">193.168.1.109</string>
+    <string name="preference_port_rtsp_key">preference_port_rtsp_key</string>
+    <string name="preference_port_rtsp_title">Puerto del servidor RTSP</string>
+    <string name="preference_port_rtsp_dialogTitle">Introduzca valor</string>
+    <string name="preference_port_rtsp_defaultValue">5454</string>
+    <string name="preference_port_http_key">preference_port_http_key</string>
+    <string name="preference_port_http_title">Puerto del servidor web</string>
+    <string name="preference_port_http_dialogTitle">Introduzca valor</string>
+    <string name="preference_port_http_defaultValue">8080</string>
+    <string name="preference_tiemposPing_key">preference_tiemposPing_key</string>
+    <string name="preference_tiemposPing_title">Tiempo ping al servidor</string>
+    <string name="preference_tiemposPing_dialogTitle">Introduzca valor</string>
+    <string name="preference_tiemposPing_defaultValue">10</string>
+    <string name="preference_delay_video_key">preference_delay_video_key</string>
+    <string name="preference_delay_video_title">Máximo delay para el video</string>
+    <string name="preference_delay_video_dialogTitle">Introduzca valor</string>
+    <string name="preference_delay_video_defaultValue">4000</string>
+    <string name="preference_delay_audio_key">preference_delay_audio_key</string>
+    <string name="preference_delay_audio_title">Máximo delay para el audio</string>
+    <string name="preference_delay_audio_dialogTitle">Introduzca valor</string>
+    <string name="preference_delay_audio_defaultValue">4000</string>
+    <string name="preference_port_teardown_key">preference_port_teardown_key</string>
+    <string name="preference_port_teardown_title">Puerto para el Teardown</string>
+    <string name="preference_port_teardown_dialogTitle">Introduzca valor</string>
+    <string name="preference_port_teardown_defaultValue">6000</string>
+
+    <!-- PREFERENCIAS - ARRAY -->
+    <string-array name="tiemposPing">
+        <item>5</item>
+        <item>10</item>
+        <item>30</item>
+        <item>60</item>
+    </string-array>
+
+    <string name="action_settings">Settings</string>
+
+</resources>
