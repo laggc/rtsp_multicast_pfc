@@ -14,10 +14,21 @@ This system contains the following projects:
 * **server_rtsp_war:** web application that implements a multicast RTSP server using the project rtsp_multicast_server
 * **simple_player_gui:** client example using the project rtsp_multicast_client.
 
+
 The requirements are:
 
 * GStreamer 0.10
 * Java 6
+
+
+Available downloads:
+
+* KMC Player for Android https://github.com/laggc/rtsp_multicast_pfc/blob/master/Downloads/app_kmc_player-0.0.1-SNAPSHOT.apk
+* KMC Server WAR https://github.com/laggc/rtsp_multicast_pfc/blob/master/Downloads/server_rtsp_war.war
+
+*[APK KMC Player for Android](/laggc/rtsp_multicast_pfc/blob/master/Downloads/app_kmc_player-0.0.1-SNAPSHOT.apk)
+
+*[KMC Server WAR](/laggc/rtsp_multicast_pfc/blob/master/Downloads/server_rtsp_war.war)
 
 
 
