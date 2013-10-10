@@ -9,6 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import edu.urjc.pfc.rtsp.server.ServerRTSP;
 
+/**
+ * 
+ * @author laggc
+ *
+ */
 @WebServlet("/StopServer")
 public class StopServer extends HttpServlet {
 	private static final long serialVersionUID = 1L;

@@ -68,6 +68,11 @@ import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.Toast;
 
+/**
+ * 
+ * @author laggc
+ *
+ */
 public class MainActivity extends Activity {
 
 	public final static String LOG_TAG = "MainActivity";

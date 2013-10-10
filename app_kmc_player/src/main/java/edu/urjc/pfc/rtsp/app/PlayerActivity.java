@@ -51,6 +51,11 @@ import edu.urjc.pfc.rtsp.client.ClientRTSP;
 import edu.urjc.pfc.rtsp.client.Info;
 import edu.urjc.pfc.rtsp.pruebas.R;
 
+/**
+ * 
+ * @author laggc
+ *
+ */
 public class PlayerActivity extends Activity implements Observer { 
 
 	public final static String LOG_TAG = "PlayerActivity";

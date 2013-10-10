@@ -10,7 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import edu.urjc.pfc.rtsp.server.ServerRTSP;
 
-
+/**
+ * 
+ * @author laggc
+ *
+ */
 @WebServlet("/DeleteMedia")
 public class DeleteMedia extends HttpServlet {
 	private static final long serialVersionUID = 1L;

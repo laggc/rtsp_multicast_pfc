@@ -12,7 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import edu.urjc.pfc.rtsp.server.ServerRTSP;
 
-
+/**
+ * 
+ * @author laggc
+ *
+ */
 @WebServlet("/GetMedias")
 public class GetMedias extends HttpServlet {
 	private static final long serialVersionUID = 1L;

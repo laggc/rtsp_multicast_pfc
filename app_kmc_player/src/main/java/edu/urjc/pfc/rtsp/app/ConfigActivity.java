@@ -16,6 +16,11 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
+/**
+ * 
+ * @author laggc
+ *
+ */
 public class ConfigActivity extends Activity {
 
 	@Override

@@ -20,7 +20,11 @@ import edu.urjc.pfc.rtsp.server.Formats;
 import edu.urjc.pfc.rtsp.server.Media;
 import edu.urjc.pfc.rtsp.server.ServerRTSP;
 
-
+/**
+ * 
+ * @author laggc
+ *
+ */
 @WebServlet("/AddMedia")
 public class AddMedia extends HttpServlet {
 	private static final long serialVersionUID = 1L;

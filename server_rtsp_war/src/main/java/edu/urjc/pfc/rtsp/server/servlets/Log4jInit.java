@@ -9,6 +9,11 @@ import org.apache.log4j.PropertyConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author laggc
+ *
+ */
 public class Log4jInit extends HttpServlet {
 
 	private static Logger logger = LoggerFactory.getLogger(Log4jInit.class);

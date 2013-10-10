@@ -9,6 +9,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+/**
+ * 
+ * @author laggc
+ *
+ */
 public class DevelopActivity extends Activity {
 
 	public final static String LOG_TAG = "DevelopActivity";

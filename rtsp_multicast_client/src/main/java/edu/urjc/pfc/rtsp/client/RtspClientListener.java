@@ -9,6 +9,11 @@ import org.mobicents.rtsp.RtspListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author laggc
+ *
+ */
 public class RtspClientListener implements RtspListener {
 
 	private static Logger logger =LoggerFactory.getLogger(RtspClientListener.class);
