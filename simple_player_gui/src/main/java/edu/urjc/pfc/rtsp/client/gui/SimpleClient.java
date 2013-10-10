@@ -28,6 +28,11 @@ import edu.urjc.pfc.rtsp.client.ClientRTSP;
 import edu.urjc.pfc.rtsp.client.Info;
 
 
+/**
+ * 
+ * @author laggc
+ *
+ */
 public class SimpleClient implements Observer {
 
 	private static Logger logger = LoggerFactory.getLogger(SimpleClient.class);
