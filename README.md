@@ -14,5 +14,10 @@ This system contains the following projects:
 * **server_rtsp_war:** web application that implements a multicast RTSP server using the project rtsp_multicast_server
 * **simple_player_gui:** client example using the project rtsp_multicast_client.
 
+The requirements are:
+
+* GStreamer 0.10
+* Java 6
+
 
 
