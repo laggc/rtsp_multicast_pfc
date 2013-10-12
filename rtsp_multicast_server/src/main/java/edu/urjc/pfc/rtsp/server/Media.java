@@ -553,7 +553,6 @@ public class Media {
 		try {
 			sendTeardown();
 			ref_pipeline.setState(State.NULL);
-			Gst.quit();
 			ref_thread.interrupt();
 		}catch(Exception e){}
 
@@ -563,7 +562,7 @@ public class Media {
 		logger.info("Send Teardown");
 
 		try {
-			String msg = "TEARDOWN";
+			String msg = title;
 			InetAddress group = InetAddress.getByName(ipMC);
 			MulticastSocket s = new MulticastSocket();
 			s.joinGroup(group);

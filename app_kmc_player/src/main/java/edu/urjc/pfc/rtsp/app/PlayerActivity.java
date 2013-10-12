@@ -13,9 +13,9 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -75,6 +75,8 @@ public class PlayerActivity extends Activity implements Observer {
 	private Integer port_teardown;
 
 	private ProgressDialog mPd;
+	
+	private String title;
 
 	private Handler tearDownHandler = new Handler(new Handler.Callback() {
 
@@ -84,6 +86,8 @@ public class PlayerActivity extends Activity implements Observer {
 			if(mPd.isShowing()) {
 				mPd.dismiss();
 			}
+			
+			
 
 			Toast.makeText(PlayerActivity.this, "Emisión terminada.", Toast.LENGTH_SHORT).show();
 
@@ -134,6 +138,7 @@ public class PlayerActivity extends Activity implements Observer {
 			if(uri_rtsp != null) {
 
 				Log.d(LOG_TAG, uri_rtsp);
+				title = uri2title(uri_rtsp);
 
 
 				//Añado la actividad como Observador del cliente
@@ -312,7 +317,7 @@ public class PlayerActivity extends Activity implements Observer {
 
 						String str = new String(recv.getData(),0,recv.getLength(),"UTF-8");
 
-						if(str.equals("TEARDOWN")) {
+						if(str.equals(title)) {
 							Log.d(LOG_TAG, "RECIBIDO TEARDOWN");
 							tearDownHandler.sendMessage(new Message());
 							break;
@@ -402,6 +407,33 @@ public class PlayerActivity extends Activity implements Observer {
 		}
 	}
 
+	
+	private String uri2title(String uri) {
+
+		//Limpiamos la URI de la IP y el puerto
+		try {
+			uri = uri.trim();
+
+			if(uri.startsWith("rtsp://")) {
+				uri= uri.substring(7);
+				String[] tokens1 = uri.split("/");
+
+				int n = tokens1.length - 1;
+				String title = tokens1[n];
+
+				return title;	
+			}
+			else {
+				throw new Exception();
+			}
+
+		}catch(Exception e) {
+			Log.d(LOG_TAG, "La URI no tiene el formato esperado\n" + e.getMessage());
+		}
+
+		return null;
+	}
+	
 	/**
 	 * Clase privada que crea un AsynTask que realiza la conexion para el protocolo RTSP.
 	 * @author laggc
