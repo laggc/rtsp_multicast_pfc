@@ -77,7 +77,8 @@ public class RtspServerListener implements RtspListener {
 			}
 
 			logger.error("Recibido request con comando desconocido.");
-			throw new RtspRequestException("Method not allowed", RtspResponseStatuses.METHOD_NOT_ALLOWED);
+			throw new RtspRequestException("Method not allowed", RtspResponseStatuses.NOT_IMPLEMENTED);
+			
 
 		}
 		catch(RtspRequestException e) {
