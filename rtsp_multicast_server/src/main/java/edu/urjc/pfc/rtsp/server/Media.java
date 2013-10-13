@@ -30,6 +30,7 @@ public class Media {
 	private String ipMC;
 	private long duration;
 	private String sdp;
+	private String ipServer;
 
 	private int portStream0;
 	private int portStream1;
@@ -133,8 +134,18 @@ public class Media {
 	private void setStream1(String stream1) {
 		this.stream1 = stream1;
 	}
+	
+	public String getIpServer() {
+		logger.debug("getIPserver " + ipServer);
+		return ipServer;
+	}
 
-	public Media(String title_, Formats format_, String path_, String pathImage_, String ipMC_, int portVideo_, int portAudio_) {
+	public void setIpServer(String ipServer) {
+		logger.debug("setIPSserver " + ipServer);
+		this.ipServer = ipServer;
+	}
+
+	public Media(String title_, Formats format_, String path_, String pathImage_, String ipMC_, int portVideo_, int portAudio_, String _ipServer) {
 
 		setTitle(title_);
 		setFormat(format_);
@@ -147,6 +158,8 @@ public class Media {
 
 		setStream0("streamid=0");
 		setStream1("streamid=1");
+		
+		setIpServer(_ipServer);
 
 		if(format == Formats.H264_Encoding_Video_WebCam || 
 				format == Formats.H264_Encoding_Video || 
@@ -179,7 +192,7 @@ public class Media {
 		String sdp;
 
 		sdp="v=0\n";
-		sdp+="o=- 1188340656180883 1 IN IP4 " + getIpMC() + "\n";
+		sdp+="o=- 1188340656180883 1 IN IP4 " + getIpServer() + "\n";
 		sdp+="s="+getTitle()+"\n";
 		sdp+="c=IN IP4 "+getIpMC()+"\n";
 		sdp+="t=0 0\n";

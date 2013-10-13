@@ -138,7 +138,7 @@ public class AddMedia extends HttpServlet {
 			}
 
 
-			Media m = new Media(titulo,formato,path,pathImagen,IPMC,puertoVideo,puertoAudio);
+			Media m = new Media(titulo,formato,path,pathImagen,IPMC,puertoVideo,puertoAudio, ServerRTSP.INSTANCE.getHost());
 
 			ServerRTSP.INSTANCE.addMedia(m);
 
