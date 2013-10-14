@@ -23,9 +23,9 @@ The requirements are:
 
 Available downloads:
 
-* [APK KMC Player](Downloads/app_kmc_player-0.0.1-SNAPSHOT.apk)
+* [APK KMC Player](Downloads/KMC-Player.apk)
 
-* [WAR KMC Server](Downloads/server_rtsp_war.war)
+* [WAR KMC Server](Downloads/KMC-Server.war)
 
 
 
