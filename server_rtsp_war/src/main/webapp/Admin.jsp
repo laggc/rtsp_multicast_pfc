@@ -30,7 +30,7 @@
             <div class="six columns">
                 <p class="tituloCaja">EMITIR NUEVO MEDIA</p>
                 
-                <form name="formulario" id="formulario" action="/Server/AddMedia" method="post" enctype="multipart/form-data">
+                <form name="formulario" id="formulario" action="AddMedia" method="post" enctype="multipart/form-data">
                     <fieldset id="recuadroIzq">
                     <div class="row">
                         <div class="twelve columns">
@@ -221,7 +221,7 @@
     
     <div style="clear:both;"></div>
     
-    <section>
+    <section class="ocultar">
         <div class="row">
             <div class="nine columns"></div>
             <div class="three columns">

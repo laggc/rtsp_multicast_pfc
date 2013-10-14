@@ -63,7 +63,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>server_rtsp_war</finalName>
+		<finalName>KMC-Server</finalName>
 		<plugins>
 
 			<plugin>
@@ -82,7 +82,7 @@
 				<configuration>
 					<url>http://localhost:8080/manager/text</url>
 					<server>TomcatServer</server>
-					<path>/Server</path>
+					<path>/KMC-Server</path>
 					<update>true</update>
 				</configuration>
 			</plugin>
