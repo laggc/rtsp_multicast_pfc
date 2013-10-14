@@ -55,6 +55,13 @@
     <string name="preference_port_teardown_title">Puerto para el Teardown</string>
     <string name="preference_port_teardown_dialogTitle">Introduzca valor</string>
     <string name="preference_port_teardown_defaultValue">6000</string>
+	<string name="preference_name_server_key">preference_name_server_key</string>
+    <string name="preference_name_server_title">Nombre del servidor</string>
+    <string name="preference_name_server_dialogTitle">Introduzca valor</string>
+    <string name="preference_name_server_defaultValue">KMC-Server</string>
+    
+    
+
 
     <!-- PREFERENCIAS - ARRAY -->
     <string-array name="tiemposPing">

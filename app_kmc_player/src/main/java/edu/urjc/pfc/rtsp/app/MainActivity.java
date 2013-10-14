@@ -177,10 +177,12 @@ public class MainActivity extends Activity {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		String ip_server = prefs.getString(getString(R.string.preference_ip_key), "");
 		String port_http_server  = prefs.getString(getString(R.string.preference_port_http_key), "");
+		String name_server  = prefs.getString(getString(R.string.preference_name_server_key), "");
+		
 
 		browser.setVerticalScrollBarEnabled(false);
 		browser.setHorizontalScrollBarEnabled(false);
-		String url = "http://"+ip_server+":"+port_http_server+"/Server/lightClient";
+		String url = "http://"+ip_server+":"+port_http_server+"/"+ name_server +"/lightClient";
 		browser.loadUrl(url);
 		browser.reload();
 
@@ -370,6 +372,12 @@ public class MainActivity extends Activity {
 			Log.i(LOG_TAG, "Valor por defecto tomado para puerto del TEARDOWN");
 			editor.putString(getString(R.string.preference_port_teardown_key), "6000");
 		}
+		
+		String nameServer_str = prefs.getString(getString(R.string.preference_name_server_key), null);
+		if(nameServer_str==null) {
+			Log.i(LOG_TAG, "Valor por defecto tomado para el nombre del server");
+			editor.putString(getString(R.string.preference_name_server_key), "KMC-Server");
+		}
 
 		editor.commit();
 	}
@@ -474,8 +482,9 @@ public class MainActivity extends Activity {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			String ip_server_web = prefs.getString(getString(R.string.preference_ip_key), "");
 			String port_server_web= prefs.getString(getString(R.string.preference_port_http_key), "");
+			String name_server= prefs.getString(getString(R.string.preference_name_server_key), "");
 
-			final String url_string = "http://" + ip_server_web.trim() + ":" + port_server_web.trim() + "/Server/GetMedias";
+			final String url_string = "http://" + ip_server_web.trim() + ":" + port_server_web.trim() + "/" + name_server +"/GetMedias";
 
 
 			String aux = "";

@@ -22,6 +22,12 @@
             android:key="@string/preference_port_http_key"
             android:summary=""
             android:title="@string/preference_port_http_title" />
+        <EditTextPreference
+            android:defaultValue="@string/preference_name_server_defaultValue"
+            android:dialogTitle="@string/preference_name_server_dialogTitle"
+            android:key="@string/preference_name_server_key"
+            android:summary=""
+            android:title="@string/preference_name_server_title" />
 
         <ListPreference
             android:defaultValue="@string/preference_tiemposPing_defaultValue"
@@ -32,7 +38,6 @@
             android:summary=""
             android:title="@string/preference_tiemposPing_title" />
     </PreferenceCategory>
-    
     <PreferenceCategory android:title="@string/preference_player_settings" >
         <EditTextPreference
             android:defaultValue="@string/preference_port_teardown_defaultValue"
