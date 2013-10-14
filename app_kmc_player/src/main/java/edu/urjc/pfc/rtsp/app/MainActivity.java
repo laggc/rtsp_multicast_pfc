@@ -39,7 +39,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import edu.urjc.pfc.rtsp.pruebas.R;
+import edu.urjc.pfc.rtsp.app.R;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -1,6 +1,6 @@
 package edu.urjc.pfc.rtsp.app;
 
-import edu.urjc.pfc.rtsp.pruebas.R;
+import edu.urjc.pfc.rtsp.app.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;

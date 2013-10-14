@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import edu.urjc.pfc.rtsp.pruebas.R;
+import edu.urjc.pfc.rtsp.app.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;

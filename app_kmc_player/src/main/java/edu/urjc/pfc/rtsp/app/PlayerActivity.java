@@ -49,7 +49,7 @@ import com.kurento.mscontrol.kas.mediacomponent.internal.VideoRecorderComponent;
 
 import edu.urjc.pfc.rtsp.client.ClientRTSP;
 import edu.urjc.pfc.rtsp.client.Info;
-import edu.urjc.pfc.rtsp.pruebas.R;
+import edu.urjc.pfc.rtsp.app.R;
 
 /**
  * 
