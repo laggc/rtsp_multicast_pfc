@@ -93,6 +93,7 @@
 	</dependencies>
 
 	<build>
+	    <finalName>KMC-Player</finalName>
 		<resources>
 			<resource>
 				<directory>${basedir}/res</directory>
