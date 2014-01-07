@@ -67,22 +67,26 @@ function subImagen(obj){
 function changeFormato(){
 
 	if((document.getElementById("inputFormato").value=="H264_Video_Audio") || 
-			(document.getElementById("inputFormato").value=="H264_Encoding_Video_Audio")){
+			(document.getElementById("inputFormato").value=="H264_Encoding_Video_Audio")|| 
+			(document.getElementById("inputFormato").value=="H263_Video_Audio")){
 
 		document.getElementById("divPuertoAudio").className="three columns";
 		document.getElementById("divPuertoVideo").className="three columns";
 
 	}
 	if((document.getElementById("inputFormato").value=="H264_Video") || 
+			(document.getElementById("inputFormato").value=="H263_Video")|| 
 			(document.getElementById("inputFormato").value=="H264_Encoding_Video")|| 
-			(document.getElementById("inputFormato").value=="H264_Encoding_Video_WebCam")){
+			(document.getElementById("inputFormato").value=="H263_Encoding_Video_WebCam")||
+			(document.getElementById("inputFormato").value=="H263_Encoding_Video_Screen")){
 
 		document.getElementById("divPuertoAudio").className="ocultar";
 		document.getElementById("divPuertoVideo").className="six columns";
 
 	}
 
-	if((document.getElementById("inputFormato").value=="H264_Encoding_Video_WebCam")){
+	if((document.getElementById("inputFormato").value=="H263_Encoding_Video_WebCam")||
+			(document.getElementById("inputFormato").value=="H263_Encoding_Video_Screen")){
 		document.getElementById("divPath").className="ocultar_simple";
 	}else {
 		document.getElementById("divPath").className="";

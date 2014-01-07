@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 public class Media {
 
 	private static Logger logger = LoggerFactory.getLogger(Media.class);
-	
-	
+
+
 	private String title;
 	private Formats format;
 	private String path;
@@ -134,7 +134,7 @@ public class Media {
 	private void setStream1(String stream1) {
 		this.stream1 = stream1;
 	}
-	
+
 	public String getIpServer() {
 		logger.debug("getIPserver " + ipServer);
 		return ipServer;
@@ -158,12 +158,14 @@ public class Media {
 
 		setStream0("streamid=0");
 		setStream1("streamid=1");
-		
+
 		setIpServer(_ipServer);
 
-		if(format == Formats.H264_Encoding_Video_WebCam || 
+		if(format == Formats.H263_Encoding_Video_WebCam || 
 				format == Formats.H264_Encoding_Video || 
-				format == Formats.H264_Video) {
+				format == Formats.H264_Video ||
+				format == Formats.H263_Video ||
+				format == Formats.H263_Encoding_Video_Screen) {
 
 			setPortAudio(-1);
 			setStream1(null);
@@ -171,16 +173,15 @@ public class Media {
 
 
 
-		if(format_==Formats.H264_Encoding_Video_WebCam) {
+		if( (format_==Formats.H263_Encoding_Video_WebCam) || (format_==Formats.H263_Encoding_Video_Screen) ) {
 			setPath(null);
 			setDuration(-1);
 		}else {
 			setPath(path_);
 			setDuration(60000);
 			setDuration(CalculateDuration());
-			
-
 		}
+
 		setSdp(GenerateSDP());
 	}
 
@@ -198,9 +199,14 @@ public class Media {
 		sdp+="t=0 0\n";
 		sdp+="m=video "+getPortVideo()+" RTP/AVP 96\n";
 		sdp+="a=control:"+getStream0()+"\n";
-		sdp+="a=rtpmap:96 H264/90000\n";
-
-		if(format == Formats.H264_Encoding_Video_Audio || format == Formats.H264_Video_Audio) {
+		
+		if(format == Formats.H264_Encoding_Video_Audio || format == Formats.H264_Video_Audio || format == Formats.H264_Video || format == Formats.H264_Encoding_Video ) {
+			sdp+="a=rtpmap:96 H264/90000\n";
+		}else {
+			sdp+="a=rtpmap:96 H263-2000/90000\n";
+		}
+		
+		if(format == Formats.H264_Encoding_Video_Audio || format == Formats.H264_Video_Audio || format == Formats.H263_Video_Audio) {
 			sdp+="m=audio "+getPortAudio()+" RTP/AVP 0\n";
 			sdp+="a=control:"+getStream1()+"\n";
 			sdp+="a=rtpmap:0 PCMU/8000\n";
@@ -210,7 +216,7 @@ public class Media {
 	}
 
 	public String generateTransport(String stream) {
-		
+
 		if(stream.equals(getStream0())) {
 			return "RTP/AVP;multicast;destination="+getIpMC()+";port="+getPortVideo()+"-"+(getPortVideo()+1)+";ttl=16";
 		}
@@ -221,7 +227,7 @@ public class Media {
 		return null;
 	}
 
-	
+
 	/**
 	 * Calcula la duración del media.
 	 * @return
@@ -232,18 +238,11 @@ public class Media {
 
 		Gst.init("GStreamer", new String[0]);
 
-		final Pipeline pipe = Pipeline.launch("filesrc name=filesrc ! qtdemux name=demux demux.video_00 ! queue2 ! h264parse  ! rtph264pay name=rtph264pay ! udpsink name=udpsinkVideo");
+		final Pipeline pipe = Pipeline.launch("filesrc name=filesrc ! decodebin2 ! fakesink");
 		ref_pipeline = pipe;
-		
-		pipe.getElementByName("filesrc").set("location",getPath());
-		pipe.getElementByName("rtph264pay").set("config-interval",config_interval);
-		pipe.getElementByName("rtph264pay").set("mtu",mtu);
-		pipe.getElementByName("udpsinkVideo").set("host", getIpMC());
-		pipe.getElementByName("udpsinkVideo").set("port", getPortVideo());
-		pipe.getElementByName("udpsinkVideo").set("sync", "true");
-		pipe.getElementByName("udpsinkVideo").set("async", "true");
 
-		
+		pipe.getElementByName("filesrc").set("location",getPath());
+
 		final Thread t = new Thread(
 				new Runnable()
 				{
@@ -255,8 +254,8 @@ public class Media {
 					}
 				});
 		t.start();
-	
-	
+
+
 		while(pipe.getState()!=State.PAUSED){
 			try {
 				Thread.sleep(10);
@@ -273,9 +272,9 @@ public class Media {
 
 		return duration;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Emitirá video+audio codificando a H264
 	 */
@@ -286,7 +285,7 @@ public class Media {
 		//Creamos el pipe de GStreamer
 		final Pipeline pipe = Pipeline.launch("filesrc name=filesrc ! decodebin name=dec dec. ! queue2 ! x264enc name=x264enc  ! rtph264pay name=rtph264pay ! udpsink name=udpsinkVideo dec. ! queue2 ! audioresample ! audioconvert ! mulawenc ! rtppcmupay  ! udpsink name=udpsinkAudio");
 		ref_pipeline = pipe;
-		
+
 		//Introducimos los parámetros para los elementos del pipe
 		pipe.getElementByName("filesrc").set("location",getPath());
 		pipe.getElementByName("x264enc").set("ref",refEncoding);
@@ -301,7 +300,7 @@ public class Media {
 		pipe.getElementByName("udpsinkAudio").set("port", getPortAudio());
 		pipe.getElementByName("udpsinkAudio").set("sync", "true");
 		pipe.getElementByName("udpsinkAudio").set("async", "true");
-		
+
 
 		/*Creamos un thread para que reproduzca el video y el hilo principal,
 		 * se quedará esperando para poder liberar el pipe de GStreamer.
@@ -346,7 +345,7 @@ public class Media {
 
 		final Pipeline pipe = Pipeline.launch("filesrc name=filesrc ! decodebin name=dec dec. ! queue2 ! x264enc name=x264enc  ! rtph264pay name=rtph264pay ! udpsink name=udpsinkVideo");
 		ref_pipeline = pipe;
-		
+
 		pipe.getElementByName("filesrc").set("location",getPath());
 		pipe.getElementByName("x264enc").set("ref",refEncoding);
 		pipe.getElementByName("x264enc").set("bitrate",bitRateEncoding);
@@ -396,7 +395,7 @@ public class Media {
 
 		final Pipeline pipe = Pipeline.launch("filesrc name=filesrc ! qtdemux name=demux demux.video_00 ! queue2 ! h264parse  ! rtph264pay name=rtph264pay ! udpsink name=udpsinkVideo");
 		ref_pipeline = pipe;
-		
+
 		pipe.getElementByName("filesrc").set("location",getPath());
 		pipe.getElementByName("rtph264pay").set("config-interval",config_interval);
 		pipe.getElementByName("rtph264pay").set("mtu",mtu);
@@ -405,7 +404,7 @@ public class Media {
 		pipe.getElementByName("udpsinkVideo").set("sync", "true");
 		pipe.getElementByName("udpsinkVideo").set("async", "true");
 
-		
+
 		final Thread t = new Thread(
 				new Runnable()
 				{
@@ -418,7 +417,7 @@ public class Media {
 				});
 		t.start();
 		ref_thread=t;
-		
+
 
 		/*El hilo principal se duerme durante el tiempo que dura el video, y luego
 		 * libera sus recursos */
@@ -442,10 +441,10 @@ public class Media {
 	 */
 	private void StreamingH264VideoAudio() {
 		Gst.init("GStreamer", new String[0]);
-		
+
 		final Pipeline pipe = Pipeline.launch("filesrc name=filesrc ! qtdemux name=demux demux.video_00 ! queue2 ! h264parse  ! rtph264pay name=rtph264pay ! udpsink name=udpsinkVideo demux.audio_00 ! decodebin2 ! queue2 ! audioresample ! audioconvert ! mulawenc ! rtppcmupay  ! udpsink name=udpsinkAudio");
 		ref_pipeline = pipe;
-		
+
 		pipe.getElementByName("filesrc").set("location",getPath());
 		pipe.getElementByName("rtph264pay").set("config-interval",config_interval);
 		pipe.getElementByName("rtph264pay").set("mtu",mtu);
@@ -453,7 +452,7 @@ public class Media {
 		pipe.getElementByName("udpsinkVideo").set("port", getPortVideo());
 		pipe.getElementByName("udpsinkAudio").set("host", getIpMC());
 		pipe.getElementByName("udpsinkAudio").set("port", getPortAudio());
-		 
+
 		final Thread t = new Thread(
 				new Runnable()
 				{
@@ -472,7 +471,7 @@ public class Media {
 		try {
 			logger.info("START PLAYING");
 			Thread.sleep(getDuration());
-			
+
 		} catch (InterruptedException e) {
 			logger.info("Interrupted exception:");
 			e.printStackTrace();
@@ -484,23 +483,126 @@ public class Media {
 
 	}
 
-	/**
-	 * Emitirá el vide proveniente de la webcam codificandolo en H264
-	 */
-	private void StreamingEncodingH264WebCam() {
+	private void StreamingH263VideoAudio() {
 
 		Gst.init("GStreamer", new String[0]);
 
-		final Pipeline pipe = Pipeline.launch("v4l2src name=v4l2src  ! textoverlay name=textoverlay ! x264enc name=x264enc  ! rtph264pay name=rtph264pay ! udpsink name=udpsinkVideo");
+		//Creamos el pipe de GStreamer
+		final Pipeline pipe = Pipeline.launch("filesrc name=filesrc ! qtdemux name=demux demux.video_00 ! queue2 ! h263parse  ! rtph263ppay ! udpsink name=udpsinkVideo demux.audio_00 ! decodebin2 ! queue2 ! audioresample ! audioconvert ! mulawenc ! rtppcmupay  ! udpsink name=udpsinkAudio");
 		ref_pipeline = pipe;
+		
+		
+		//Introducimos los parámetros para los elementos del pipe
+		pipe.getElementByName("filesrc").set("location",getPath());
+		pipe.getElementByName("udpsinkVideo").set("host", getIpMC());
+		pipe.getElementByName("udpsinkVideo").set("port", getPortVideo());
+		pipe.getElementByName("udpsinkVideo").set("sync", "true");
+		pipe.getElementByName("udpsinkVideo").set("async", "true");
+		pipe.getElementByName("udpsinkAudio").set("host", getIpMC());
+		pipe.getElementByName("udpsinkAudio").set("port", getPortAudio());
+		pipe.getElementByName("udpsinkAudio").set("sync", "true");
+		pipe.getElementByName("udpsinkAudio").set("async", "true");
+
+
+		/*Creamos un thread para que reproduzca el video y el hilo principal,
+		 * se quedará esperando para poder liberar el pipe de GStreamer.
+		 * La ejecución no se corta porque anteriormente (Streaming()) habia creado 
+		 * ya un hilo para el Streaming
+		 */
+		final Thread t = new Thread(
+				new Runnable()
+				{
+					public void run()
+					{ 
+						pipe.setState(State.PLAYING);
+						Gst.main();     
+						pipe.setState(State.NULL);
+					}
+				});
+		t.start();
+		ref_thread=t;
+
+
+		/*El hilo principal se duerme durante el tiempo que dura el video, y luego
+		 * libera sus recursos */
+		try {
+			logger.info("START PLAYING");
+			Thread.sleep(getDuration());
+		} catch (InterruptedException e) {
+			logger.info("Interrupted exception:");
+			e.printStackTrace();
+		}
+
+		logger.info("Reproducción terminada. Borrando streaming:" + getTitle());
+		sendTeardown();
+		ServerRTSP.INSTANCE.deleteMedia(getTitle());
+	}
+	
+	private void StreamingH263Video() {
+
+		Gst.init("GStreamer", new String[0]);
+
+		//Creamos el pipe de GStreamer
+		final Pipeline pipe = Pipeline.launch("filesrc name=filesrc ! qtdemux name=demux demux.video_00 ! queue2 ! h263parse  ! rtph263ppay ! udpsink name=udpsinkVideo");
+		ref_pipeline = pipe;
+		
+		
+		//Introducimos los parámetros para los elementos del pipe
+		pipe.getElementByName("filesrc").set("location",getPath());
+		pipe.getElementByName("udpsinkVideo").set("host", getIpMC());
+		pipe.getElementByName("udpsinkVideo").set("port", getPortVideo());
+		pipe.getElementByName("udpsinkVideo").set("sync", "true");
+		pipe.getElementByName("udpsinkVideo").set("async", "true");
+
+
+		/*Creamos un thread para que reproduzca el video y el hilo principal,
+		 * se quedará esperando para poder liberar el pipe de GStreamer.
+		 * La ejecución no se corta porque anteriormente (Streaming()) habia creado 
+		 * ya un hilo para el Streaming
+		 */
+		final Thread t = new Thread(
+				new Runnable()
+				{
+					public void run()
+					{ 
+						pipe.setState(State.PLAYING);
+						Gst.main();     
+						pipe.setState(State.NULL);
+					}
+				});
+		t.start();
+		ref_thread=t;
+
+
+		/*El hilo principal se duerme durante el tiempo que dura el video, y luego
+		 * libera sus recursos */
+		try {
+			logger.info("START PLAYING");
+			Thread.sleep(getDuration());
+		} catch (InterruptedException e) {
+			logger.info("Interrupted exception:");
+			e.printStackTrace();
+		}
+
+		logger.info("Reproducción terminada. Borrando streaming:" + getTitle());
+		sendTeardown();
+		ServerRTSP.INSTANCE.deleteMedia(getTitle());
+	}
+
+	/**
+	 * Emitirá el vide proveniente de la webcam codificandolo en H264
+	 */
+	private void StreamingEncodingH263WebCam() {
+
+		Gst.init("GStreamer", new String[0]);
+
+		final Pipeline pipe = Pipeline.launch("v4l2src name=v4l2src  ! textoverlay name=textoverlay ! ffenc_h263 name=ffenc_h263 ! rtph263ppay name=rtph263ppay ! udpsink name=udpsinkVideo");
+		ref_pipeline = pipe;
+
 
 		pipe.getElementByName("v4l2src").set("device","/dev/video0");
 		pipe.getElementByName("textoverlay").set("text","EMISIÓN DESDE KMC SERVER");
-		
-		pipe.getElementByName("x264enc").set("ref",refEncoding);
-		pipe.getElementByName("x264enc").set("bitrate",bitRateEncoding);
-		pipe.getElementByName("rtph264pay").set("config-interval",config_interval);
-		pipe.getElementByName("rtph264pay").set("mtu",mtu);
+		pipe.getElementByName("ffenc_h263").set("gop-size","0");
 		pipe.getElementByName("udpsinkVideo").set("host", getIpMC());
 		pipe.getElementByName("udpsinkVideo").set("port", getPortVideo());
 		pipe.getElementByName("udpsinkVideo").set("sync", "false");
@@ -519,8 +621,37 @@ public class Media {
 				});
 		t.start();
 		ref_thread=t;
-		
-		
+	}
+
+	private void StreamingEncodingH263Screenshot() {
+
+		Gst.init("GStreamer", new String[0]);
+
+		final Pipeline pipe = Pipeline.launch("ximagesrc name=ximagesrc ! autovideoconvert ! ffenc_h263 name=ffenc_h263 ! video/x-h263, width=704, height=576, framerate=25/1 ! rtph263ppay name=rtph263ppay ! udpsink name=udpsinkVideo");
+		ref_pipeline = pipe;
+
+		pipe.getElementByName("ximagesrc").set("show-pointer",false);
+		pipe.getElementByName("ffenc_h263").set("gop-size",0);
+		pipe.getElementByName("udpsinkVideo").set("host", getIpMC());
+		pipe.getElementByName("udpsinkVideo").set("port", getPortVideo());
+		pipe.getElementByName("udpsinkVideo").set("sync", "false");
+		pipe.getElementByName("udpsinkVideo").set("async", "false");
+
+
+		final Thread t = new Thread(
+				new Runnable()
+				{
+					public void run()
+					{ 
+						pipe.setState(State.PLAYING);
+						Gst.main();     
+						pipe.setState(State.NULL);
+					}
+				});
+		t.start();
+		ref_thread=t;
+
+
 	}
 
 	/**
@@ -548,15 +679,24 @@ public class Media {
 						case H264_Video:
 							StreamingH264Video();
 							break;
-						case H264_Encoding_Video_WebCam:
-							StreamingEncodingH264WebCam();
+						case H263_Encoding_Video_WebCam:
+							StreamingEncodingH263WebCam();
+							break;
+						case H263_Encoding_Video_Screen:
+							StreamingEncodingH263Screenshot();
+							break;
+						case H263_Video_Audio:
+							StreamingH263VideoAudio();
+							break;
+						case H263_Video:
+							StreamingH263Video();
 							break;
 						}
 					}
 				});
-		
+
 		t.start();
-		
+
 	}
 
 	/**

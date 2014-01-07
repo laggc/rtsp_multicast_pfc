@@ -48,7 +48,6 @@ public class AddMedia extends HttpServlet {
 		int puertoVideo= -1;
 		int puertoAudio= -1;
 
-
 		response.setContentType("text/html");
 		try
 		{
@@ -69,6 +68,7 @@ public class AddMedia extends HttpServlet {
 
 			while( iterator.hasNext() )
 			{
+				
 				FileItem item = (FileItem) iterator.next();
 
 				if(item.isFormField()){
@@ -84,14 +84,23 @@ public class AddMedia extends HttpServlet {
 						if(item.getString().equals("H264_Video")){
 							formato=Formats.H264_Video;
 						}
+						if(item.getString().equals("H263_Video_Audio")){
+							formato=Formats.H263_Video_Audio;
+						}
+						if(item.getString().equals("H263_Video")){
+							formato=Formats.H263_Video;
+						}
 						if(item.getString().equals("H264_Encoding_Video_Audio")){
 							formato=Formats.H264_Encoding_Video_Audio;
 						}
 						if(item.getString().equals("H264_Encoding_Video")){
 							formato=Formats.H264_Encoding_Video;
 						}
-						if(item.getString().equals("H264_Encoding_Video_WebCam")){
-							formato=Formats.H264_Encoding_Video_WebCam;
+						if(item.getString().equals("H263_Encoding_Video_WebCam")){
+							formato=Formats.H263_Encoding_Video_WebCam;
+						}
+						if(item.getString().equals("H263_Encoding_Video_Screen")){
+							formato=Formats.H263_Encoding_Video_Screen;
 						}
 					}
 

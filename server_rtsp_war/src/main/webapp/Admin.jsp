@@ -149,13 +149,11 @@
                     
                     <!-- Div que contiene el input type=file oculto para el Path -->
                     <div class="ocultar">
-                        <input name="inputPathAux" id="inputPathAux" type="file" accept="video/*" onchange="subPath(this)"/>
+                        <input name="inputPathAux" id="inputPathAux" type="file" accept=".3gp,video/*" onchange="subPath(this)"/>
                     </div>
                     
                     <!-- Div que contiene el input type=file para la imagen -->
-                    <div class="ocultar">
-	                      
-																												
+                    <div class="ocultar">																			
                         <input name="inputImagenAux" id="inputImagenAux" type="file" accept="image/*" onchange="subImagen(this)"/>
                     </div>
                     
